@@ -381,8 +381,8 @@ INSERT INTO `options` (`id`, `key`, `tab_id`, `group`, `value`, `title`, `descri
 
 INSERT INTO `options` (`key`, `tab_id`, `group`, `value`, `title`, `description`, `label`, `type`, `order`, `calendar_id`) VALUES
 ('stripe_allow', 3, 'peyment', '1|2::1', 'Stripe payment enable', '', 'Yes|No', 'enum', 20, 1),
-('stripe_api_key', 3, 'peyment', 'STRIPE_SECRET_KEY_PLACEHOLDER', 'Stripe API key', '', NULL, 'string', 21, 1),
-('stripe_publish_key', 3, 'peyment', 'STRIPE_PUBLISHABLE_KEY_PLACEHOLDER', 'Stripe API publishable key', '', NULL, 'string', 22, 1);
+('stripe_api_key', 3, 'peyment', '', 'Stripe API key', '', NULL, 'string', 21, 1),
+('stripe_publish_key', 3, 'peyment', '', 'Stripe API publishable key', '', NULL, 'string', 22, 1);
 
 INSERT INTO `options` (`key`, `tab_id`, `group`, `value`, `title`, `description`, `label`, `type`, `order`, `calendar_id`) VALUES
 ('others_allow', 3, 'peyment', '1|2::1', 'Others payment enable', '', 'Yes|No', 'enum', 23, 1);

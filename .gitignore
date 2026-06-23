@@ -3,7 +3,6 @@ application/config/env.php
 application/config/env_*.php
 .env
 .env.*
-!.env.example
 
 # Composer dependencies
 /vendor/

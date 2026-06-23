@@ -415,14 +415,7 @@ function saveFoodcouponInvoice($ID){
 }
 
 function viewInvoice() {
-    //my twillo account setting
-  //$sid = 'TWILIO_ACCOUNT_SID_PLACEHOLDER';
-  //$token$token = 'TWILIO_AUTH_TOKEN_PLACEHOLDER';
-   //hdbs twillo account setting
-   //$sid = 'TWILIO_ACCOUNT_SID_PLACEHOLDER';
-   //$token$token = 'TWILIO_AUTH_TOKEN_PLACEHOLDER';
-   //$client = new Client($sid, $token);
-   GzObject::loadFiles('Model', array('Foodcoupon'));
+    GzObject::loadFiles('Model', array('Foodcoupon'));
    $FoodcouponModel = new FoodcouponModel();
    if (!empty($_GET['id'])) {
        $Food = $this->getFoodcoupon($_GET['ID'] ?? '');
