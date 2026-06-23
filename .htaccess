@@ -1,0 +1,37 @@
+# Block direct browser access to sensitive file types
+<FilesMatch "\.(sql|bak|dump|tar|gz|log|env|ini|sh)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block direct browser access to root config file
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# CORS — Set the correct origin for your environment.
+# Uncomment EXACTLY ONE line below, comment the others.
+# Local:  http://localhost:8082
+# Test:   https://durgabari.org
+# Prod:   https://durgabari.org
+#
+# Alternative: set APP_CORS_ORIGIN via Apache SetEnv in httpd.conf
+# and use: Header set Access-Control-Allow-Origin "%{APP_CORS_ORIGIN}e"
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "http://localhost:8082"
+    # Header set Access-Control-Allow-Origin "https://durgabari.org"
+</IfModule>
+
+#
+# Redirect all to index.php
+#
+RewriteEngine On
+
+# if a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteCond %{REQUEST_URI} (/[^.]*|\.)$ [NC]
+RewriteRule .* index.php [L]
+php_value max_execution_time 600

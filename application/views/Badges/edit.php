@@ -1,0 +1,292 @@
+﻿
+<style>
+.ui-datepicker-calendar {
+    display: none;
+}
+td {
+  text-align: center;
+}
+.ui-datepicker-month {
+    display: none;
+}
+.ui-icon-circle-triangle-w{
+width:35px!important;
+}
+.ui-icon.ui-icon-circle-triangle-e{
+width:35px!important;
+margin-left: -29px!important;
+font: bold;
+}
+.icheckbox_minimal{
+    display:none;
+}
+
+
+</style>
+<section class="content-header">
+    <h1>
+        <?php echo __('edit_member'); ?>
+    </h1>
+    <?php if (!$this->controller->isMember()) { ?>
+    <ol class="breadcrumb">
+        <li><a href="<?php echo INSTALL_URL; ?>"><i class="fa fa-dashboard"></i> <?php echo __('home'); ?></a></li>
+        <li><a href="<?php echo INSTALL_URL; ?>Member/index"><?php echo __('title_members'); ?></a></li>
+        <li class="active"><?php echo __('edit_member'); ?></li>
+    </ol>
+    <?php } ?>
+</section>
+<?php
+require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
+ $renew =strtotime(($tpl['arr'] ?? [])['Renew_date'] ?? '');
+$date = date("m/d/Y", $renew ); 
+  $Application_date =strtotime(($tpl['arr'] ?? [])['CreatedOn'] ?? '');
+  $App_date = date("m/d/Y", $Application_date );                     
+?>
+<section class="content left width_100">
+    <form id="payment-form" class="frm-class user-frm-class" action="<?php echo INSTALL_URL; ?>Member/edit"
+        method="post" name="edit" enctype="multipart/form-data">
+        <div class="padding-19 nav-tabs-custom left width_100">
+            <fieldset>
+            <table class="table" style="margin-left: 250px;width: 20%;">
+                    <tr class="tr">
+                        <td style="font-size: xx-large;"class="td">Assigned Parking For Members</td>
+    </tr>
+                </table>
+    <div class="row">
+              <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Member_id <i class="mdi mdi-pen mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"><?php echo ($tpl['arr'] ?? [])['Member_id'] ?? ''; ?></h2>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">First Name<i class="mdi mdi-account-card-details float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"><?php echo ($tpl['arr'] ?? [])['F_Name'] ?? ''; ?></h2>
+                    
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Last Name<i class="mdi mdi-account-card-details float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"> <?php echo ($tpl['arr'] ?? [])['L_Name'] ?? ''; ?></h2>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Spouse Name<i class="mdi mdi-gender-male-female float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"> <?php echo ($tpl['arr'] ?? [])['Sp_FName'] ?? ''; ?></h2>
+                    
+                  </div>
+                </div>
+              </div>
+             
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">YTD<i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">2000</h2>
+                    <!-- <h2 class="mb-5"><?php echo ($tpl['arr'] ?? [])['Member_id'] ?? ''; ?></h2> -->
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Parking Basis<i class="mdi mdi-parking float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">Sponsor</h2>
+                    
+                  </div>
+                </div>
+              </div>
+             
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Sponsor Level<i class="mdi mdi-diamond mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">GOLD</h2>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Registration Status<i class="mdi mdi-diamond mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">YES</h2>
+                    
+                  </div>
+                </div>
+              </div>
+            
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Pending Isssues <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">NO</h2>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Parking Lot Assigned<i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"><select required="true" id="Parking"  style="width: 100%!important;" name="Parking" class="form-control input-sm medium valid"  >
+    <option value="">Please select parking lot assigned</option>
+    <option value="Main">Main</option> 
+    <option value="Main(SS)">Main(SS)</option>  
+    <option value="KalaBhavan">Kala Bhavan</option> 
+    <option value="KalaBhavan(CTS)">Kala Bhavan(CTS)</option>  
+    <option value="JainTemple">Jain Temple</option> 
+    <option value="GreenField ">Green Field</option> 
+     </select></h2>
+                    
+                  </div>
+                </div>
+              </div>
+             
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-3">Decal Assigned<i class="mdi mdi-diamond mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5">Test</h2>
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white">
+                  <div class="card-body">
+                    <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-2">FULL Name When Authorized To Collect<i class="mdi mdi-diamond mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"> <input required="true" id="Full_Name" class="form-control input-sm" type="text" name="Full_Name" size="25"
+                                value="<?php echo ($tpl['arr'] ?? [])['Full_Name'] ?? ''; ?>" title="Full Name"
+                                placeholder="Full Name "></h2>
+                    
+                  </div>
+                </div>
+              </div>
+            
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 stretch-card grid-margin">
+            <div class="card bg-gradient-primary card-img-holder text-white">
+                <div class="card-body">Signature
+                <button id="clear">Clear</button>
+                <button id="disable">Disable</button> 
+                <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                <!-- <h4 class="font-weight-normal mb-3">Signature<i class="mdi mdi-diamond mdi-24px float-right"></i> -->
+                <div  style="width: 341px!important;height: 81px!important;" id="sig"> </div>
+                <textarea id="signature64" name="signed" style="display: none"></textarea>
+                
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-sm-6 col-xs-12 stretch-card grid-margin">
+            <div class="card bg-gradient-primary card-img-holder text-white">
+                <div class="card-body">
+                <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                Date
+                <input  style="width: 100%!important;" required="true" max="<?php echo date('Y-m-d'); ?>"  id="year_birth3" class="form-control input-sm" type="date" name="Date" size="25" value="" title="Date" placeholder=""></input> 
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 stretch-card grid-margin">
+            <div class="card bg-gradient-primary card-img-holder text-white">
+                <div class="card-body">
+                <img src="<?php echo INSTALL_URL; ?>images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                
+                  
+                        <button  style="width:130px!important;height:75px"   id="submit" class="btn btn-primary" autocomplete="off" value="<?php echo __('save'); ?>"
+                    name="submit" tabindex="9" type="submit"><i
+                        class="fa fa-fw fa-save"></i>&nbsp;&nbsp;<?php echo _('Save') ?></button>
+                        <button  style="float:right!important;width:130px!important;height:75px" id="submit" class="btn btn-primary" autocomplete="off" value="<?php echo __('save'); ?>"
+                    name="submit" tabindex="9" type="submit"><i
+                        class="fa fa-fw fa-save"></i>&nbsp;&nbsp;<?php echo _('Cancel') ?></button>
+                </div>
+                </div>
+              </div>
+            </div>
+    
+            </fieldset>
+        </div>
+    </form>
+    <div id="dialogDeleteImage" title="<?php echo htmlspecialchars(__('gallery_del_title')); ?>" style="display:none">
+        <p><?php echo __('gallery_del_body'); ?></p>
+    </div>
+</section>
+<div id="record_id" style="display:none"></div>
+
+    <script>
+$(function() {
+    var sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG'});
+	//var sig = $('#sig').signature();
+	$('#disable').click(function() {
+		var disable = $(this).text() === 'Disable';
+		$(this).text(disable ? 'Enable' : 'Disable');
+		sig.signature(disable ? 'disable' : 'enable');
+	});
+	$('#clear').click(function(e) {
+
+        e.preventDefault();
+        sig.signature('clear');
+        $("#signature64").val('');
+    });
+	// $('#json').click(function() {
+	// 	alert(sig.signature('toJSON'));
+	// });
+	// $('#svg').click(function() {
+	// 	alert(sig.signature('toSVG'));
+	// });
+});
+$(function() {
+    $('.date-picker').datepicker({
+        changeMonth: false,
+        changeDate: false,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'yy',
+        maxDate: new Date(new Date().getFullYear(), 1, 1),
+        onClose: function(dateText, inst) {
+            //var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker('setDate', new Date(year, 1, 1));
+        }
+    });
+});
+</script>

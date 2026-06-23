@@ -1,0 +1,52 @@
+# Local environment and secrets
+application/config/env.php
+application/config/env_*.php
+.env
+.env.*
+!.env.example
+
+# Composer dependencies
+/vendor/
+/application/controllers/Twillio/vendor/
+
+# Runtime logs and error output
+*.log
+error_log
+error.txt
+/logs/
+/core/framework/logs/
+
+# Runtime cache and test artifacts
+.phpunit.result.cache
+/cache/
+/tmp/
+/temp/
+/sessions/
+
+# Generated uploads and database backups
+/application/web/upload/backup/
+*.bak
+*.backup
+
+# Local-only scratch/debug scripts and notes
+/find_brace.php
+/find_unclosed_brace.php
+/fix_arr_nullcoalesce.php
+/fix_pujaregistration_adult_columns.php
+/fix_pujaregistration_extra_members_table.php
+/test.php
+/s1.txt
+/PUJA_ONLINE_PAYMENTS_WORK_MEMORY.md
+/HDBS_PUJA_PAYMENTS_OTP_ZELLE_HANDOFF.md
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Hosting/client noise
+.ftpquota
