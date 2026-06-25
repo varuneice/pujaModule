@@ -617,10 +617,16 @@
     <div class="auto-container">
         <div class="row clearfix">
             <!--Title -->
-            <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                <img style="float:left;padding:20px" src="../1.svg" width="35%">
-                <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
-            </div>
+            <!--<div class="title-column col-lg-6 col-md-12 col-sm-12">-->
+            <!--    <img style="float:left;padding:20px" src="../1.svg" width="35%">-->
+            <!--    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">-->
+            <!--</div>-->
+            <?php
+            if (!defined("ROOT_PATH")) {
+                define("ROOT_PATH", dirname(__FILE__) . '/');
+            }
+            ?>
+            <?php include_once ROOT_PATH . 'application/templates/title_images.php'; ?>
             <!--Bread Crumb -->
             <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
                 <h1>Houston Durga Bari Society</h1>
@@ -636,13 +642,13 @@
                     echo "" . $currentYear . " - " . $nextYear . " Puja Online System ";
                     ?>
                 </h3>
-                <h3>Payment for Puja Parking</h3>
+                <h3>Donation for Puja Benefactor</h3>
                 <!-- <h4><span>Contact : </span><a href="mailto:registration@durgabari.org"> registration@durgabari.org</a></h4>-->
                 <ul class="bread-crumb clearfix">
                     <li><a style="text-decoration:none;color:#fff;"
                             href="<?php echo INSTALL_URL; ?>Associatepayments/Associatepayments">Home</a>
                     </li>
-                    <li class="active">Paid Parking</li>
+                    <li class="active">Puja Benefactor</li>
                 </ul>
             </div>
         </div>
@@ -1208,30 +1214,29 @@
                         <h2><span style="color: #ef260f;">General</span> Guidelines</h2>
                     </div>
                     <div class="widget-content">
-                        <div class="text"><strong>Step 1 : </strong>Express your interest to purchase a parking spot
+                        <div class="text"><strong>Step 1 : </strong>Express your interest to be a Puja Benefactor
                         </div>
                         <div class="text"><strong>Step 2 : </strong>Registration Team will validate your application and
                             send a confirmation</div>
                         <div class="text"><strong>Step 3 : </strong>Make the payment </div>
-                        <div class="text"><strong>1. </strong>Parking for Durga Puja and Kali Puja only. Open parking
-                            during Saraswati Puja.</div>
+                        <div class="text"><strong>1. </strong>Puja Benefactors are entered into a waiting list
+                            for parking at Green Field. Allocation of
+                            parking is not guaranteed and depends on
+                            availability.</div>
                         <div class="text"><strong>2. </strong>Prior Puja registration is mandatory. Please submit this
                             after you have completed your registration.</div>
-                        <div class="text"><strong>3. </strong>All Gold+ and Senior CT Silver Sponsors will have assigned
-                            parking and are not
-                            required to submit this request. Silver Sponsors may opt for Green Field parking at a
-                            discounted rate thru this process</div>
+                        <div class="text"><strong>3. </strong>Sponsors are not required to submit
+                            any application .</div>
                         <div class="text"><strong>4. </strong>Due to limited space, Sponsors, Senior Registrants and
-                            Registrants with accompanying (registered) parents will be prioritized for Green Field
-                            parking. General Registrants will be held on a priority list and notified based on any
-                            remaining parking space availability. Reservation is final only after due payment processing
-                            and confirmation. </div>
+                            Registrants with accompanying (registered)
+                            parents will be prioritized for Green Field
+                            parking. Notifications will be issued based on
+                            availability. </div>
                         <div class="text"><strong>5. </strong>Senior designation starts at 70 years. Senior
                             status/discount applies to primary registrant and spouse only (and not to any accompanying
                             parents)</div>
-                        <div class="text"><strong>6. </strong>Parking in Green Field is subject to weather and ground
-                            conditions. Payment will be refunded if the Green Field is not in a usable condition for at
-                            least two days out of Fri/Sat/Sun during Durga Puja</div>
+                        <div class="text"><strong>6. </strong>Parking in Green Field is subject to weather
+                            and ground conditions. All donations are nonrefundable.</div>
                     </div>
                 </div>
 
@@ -1245,17 +1250,17 @@
                                 style="color:#000;text-decoration:none;" href="mailto:registration@durgabari.org">
                                 registration@durgabari.org</a></p>
                         <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+18326129855"> <strong
+                                    style="font-size:26px;">+1 832-612-9855</strong> <br><span
+                                    style="font-size:20px;color:#000;">Monalisa</span></a></p>
+                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+12252846495"> <strong
+                                    style="font-size:26px;">+1 225-284-6495</strong> <br><span
+                                    style="font-size:20px;color:#000;">Tarun</span></a></p>
+                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
                                 style="color:#000;text-decoration:none;" href="tel:+18322055665"> <strong
-                                    style="font-size:26px;">+1 832-205-5665</strong> <br><span
-                                    style="font-size:20px;color:#000;">Amit Bhaduri</span></a></p>
-                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
-                                style="color:#000;text-decoration:none;" href="tel:+18326909062"> <strong
-                                    style="font-size:26px;">+1 832-723-4829</strong> <br><span
-                                    style="font-size:20px;color:#000;">Debashish Sarkar</span></a></p>
-                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
-                                style="color:#000;text-decoration:none;" href="tel:+18326770860"> <strong
-                                    style="font-size:26px;"> +1 832-677-0860</strong> <br><span
-                                    style="font-size:20px;color:#000;">Subhas Das</span></a></p>
+                                    style="font-size:26px;"> +1 832-205-5665</strong> <br><span
+                                    style="font-size:20px;color:#000;">Amit</span></a></p>
 
                     </div>
                 </div>

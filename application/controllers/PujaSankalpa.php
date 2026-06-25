@@ -224,6 +224,8 @@ class PujaSankalpa extends App
         $this->layout = 'login';
         GzObject::loadFiles('Model', array('SankalpaPuja', 'SankalpaPujaPrice', 'Donation', 'ConfirmCode', 'Member', 'idnumbers', 'User', 'pujaregistration'));
         $SankalpaPujaModel = new SankalpaPujaModel();
+        $SankalpaPujaModel->ensureChildAgeColumns();
+        $SankalpaPujaModel->syncSchemaWithTableColumns();
         $SankalpaPujaPriceModel = new SankalpaPujaPriceModel();
         $DonationModel = new DonationModel();
         $ConfirmCodeModel = new ConfirmCodeModel();
@@ -330,6 +332,8 @@ class PujaSankalpa extends App
 
                 $_POST['child1name'] = $_POST['childname'][0] ?? '';
                 $_POST['child2name'] = $_POST['childname'][1] ?? '';
+                $_POST['child1age'] = $_POST['childage'][0] ?? '';
+                $_POST['child2age'] = $_POST['childage'][1] ?? '';
 
                 $fullnamesponsorpuja = $_POST['fullnamesponsorpuja'] ?? '';
                 $dataToInsert = is_array($fullnamesponsorpuja) ? implode(', ', $fullnamesponsorpuja) : (string)$fullnamesponsorpuja;
@@ -853,6 +857,8 @@ class PujaSankalpa extends App
                 $this->removeHaateKhoriPranami($_POST);
                 $_POST['child1name'] = $_POST['childname'][0] ?? '';
                 $_POST['child2name'] = $_POST['childname'][1] ?? '';
+                $_POST['child1age'] = $_POST['childage'][0] ?? '';
+                $_POST['child2age'] = $_POST['childage'][1] ?? '';
                 $fullnamesponsorpuja = $_POST['fullnamesponsorpuja'] ?? '';
                 $dataToInsert = is_array($fullnamesponsorpuja) ? implode(', ', $fullnamesponsorpuja) : (string)$fullnamesponsorpuja;
                 $_POST['personofferingpujasankalpa'] =   $dataToInsert;
@@ -2179,6 +2185,8 @@ class PujaSankalpa extends App
 
                 $_POST['child1name'] = $_POST['childname'][0] ?? '';
                 $_POST['child2name'] = $_POST['childname'][1] ?? '';
+                $_POST['child1age'] = $_POST['childage'][0] ?? '';
+                $_POST['child2age'] = $_POST['childage'][1] ?? '';
 
                 $fullnamesponsorpuja = $_POST['fullnamesponsorpuja'] ?? '';
                 $dataToInsert = is_array($fullnamesponsorpuja) ? implode(', ', $fullnamesponsorpuja) : (string)$fullnamesponsorpuja;
@@ -2583,6 +2591,8 @@ class PujaSankalpa extends App
                 $this->removeHaateKhoriPranami($_POST);
                 $_POST['child1name'] = $_POST['childname'][0] ?? '';
                 $_POST['child2name'] = $_POST['childname'][1] ?? '';
+                $_POST['child1age'] = $_POST['childage'][0] ?? '';
+                $_POST['child2age'] = $_POST['childage'][1] ?? '';
                 $fullnamesponsorpuja = $_POST['fullnamesponsorpuja'] ?? '';
                 $dataToInsert = is_array($fullnamesponsorpuja) ? implode(', ', $fullnamesponsorpuja) : (string)$fullnamesponsorpuja;
                 $_POST['personofferingpujasankalpa'] =   $dataToInsert;

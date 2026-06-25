@@ -334,7 +334,7 @@ input#memphone2fam { width: 368px;}
                 <!--Title -->
                <div class="title-column col-lg-6 col-md-12 col-sm-12">
                     <img style="float:left;padding:20px" src="../1.svg" width="30%">
-					<img style="border-radius: 96px;float: left;padding: 0px;padding-top: .8rem;" src="../puja_logo.png" width="30%">
+					<img style="border-radius: 96px;float: left;padding: 0px; margin-top: 2rem;" src="../merchandise.jpg" width="20%">
                 </div>
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">

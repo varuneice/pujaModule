@@ -44,7 +44,7 @@ class Underconstruction extends App {
     }
 
    function Underconstruction() {
-    // action method — __construct() handles data loading
+    // Action method; __construct() handles layout setup.
   }
 
   function __construct()

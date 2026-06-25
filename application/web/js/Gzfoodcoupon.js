@@ -21,6 +21,10 @@
                 return;
             } 
             var val = $(this).val();
+            $("#zelleProxyData").hide();
+            $("#proxyTrId").prop('required', false);
+            $("#proxyTrdate").prop('required', false);
+            $("#proxyprice").prop('required', false);
 
             if (val == 'stripe') {
                 $("#others_details").hide();
@@ -370,6 +374,55 @@
                 $("#sumupprice").val("");
                 $("#sumdatedate").val("");
     
+            } else if (val == 'zelleProxy') {
+                $("#stripe_details").hide();
+                $("#others_details").hide();
+                $("#checkdata").hide();
+                $("#cashdata").hide();
+                $("#directdepositedata").hide();
+                $("#Sumupdata").hide();
+                $("#zelleProxyData").show();
+
+                document.getElementById("error_code1").style.display = "none";
+                document.getElementById("error_code2").style.display = "none";
+                document.getElementById("error_codeimg").style.display = "none";
+                document.getElementById("checkPaymentData").style.display = "none";
+                document.getElementById("MemberID1").style.display = "none";
+
+                $("#MemberID").prop('required', false);
+                $("#receiveby").prop('required', false);
+                $("#cashamount").prop('required', false);
+                $("#cashdate").prop('required', false);
+                $("#checkbankname").prop('required', false);
+                $("#checkno").prop('required', false);
+                $("#checkamount").prop('required', false);
+                $("#checkdate").prop('required', false);
+                $("#bankname").prop('required', false);
+                $("#ISFCCode").prop('required', false);
+                $("#directamount").prop('required', false);
+                $("#directdepositdate").prop('required', false);
+                $("#sumupid").prop('required', false);
+                $("#sumupprice").prop('required', false);
+                $("#sumdatedate").prop('required', false);
+
+                $("#proxyTrId").prop('required', true);
+                $("#proxyTrdate").prop('required', true);
+                $("#proxyprice").prop('required', true);
+
+                $("#checkbankname").val("");
+                $("#checkno").val("");
+                $("#checkamount").val("");
+                $("#checkdate").val("");
+                $("#bankname").val("");
+                $("#ISFCCode").val("");
+                $("#directamount").val("");
+                $("#directdepositdate").val("");
+                $("#receiveby").val("");
+                $("#cashamount").val("");
+                $("#cashdate").val("");
+                $("#sumdata").val("");
+                $("#sumupprice").val("");
+                $("#sumdatedate").val("");
             }
          else {
                 $("#stripe_details").hide();

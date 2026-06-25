@@ -5,6 +5,7 @@
 <thead>
        <tr>
         <th><?php echo __('Item Name'); ?></th>
+        <th><?php echo __('Status'); ?></th>
         <th><?php echo __('Category'); ?></th>
        
             <th class="icon-th"></th>
@@ -21,6 +22,7 @@
                ?>
               <tr class="<?php echo $i % 2 === 0 ? 'odd' : 'even'; ?>">
                    <td><?php echo $tpl['arr'][$i]['itemname']; ?></td>
+                   <td><?php echo $tpl['arr'][$i]['status']; ?></td>
                    <td><?php echo $tpl['arr'][$i]['category']; ?></td>
                   
                  <?php if ($this->controller->isAdmin())  { ?>

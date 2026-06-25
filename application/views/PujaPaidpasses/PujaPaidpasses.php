@@ -673,10 +673,16 @@
     <div class="auto-container">
         <div class="row clearfix">
             <!--Title -->
-            <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                <img style="float:left;padding:20px" src="../1.svg" width="35%">
-                <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
-            </div>
+            <!--<div class="title-column col-lg-6 col-md-12 col-sm-12">-->
+            <!--    <img style="float:left;padding:20px" src="../1.svg" width="35%">-->
+            <!--    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">-->
+            <!--</div>-->
+             <?php
+            if (!defined("ROOT_PATH")) {
+                define("ROOT_PATH", dirname(__FILE__) . '/');
+            }
+            ?>
+            <?php include_once ROOT_PATH . 'application/templates/title_images.php'; ?>
             <!--Bread Crumb -->
             <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
                 <h1>Houston Durga Bari Society</h1>
@@ -817,13 +823,22 @@
                     <!-- end -->
                     <br>
 
-                    <!--checkbox for student & outoftowner-->
+                    <!-- parent registration -->
                     <div class="row" id="parent_register" style="display:none;">
-                        <div class="col-md-12 checkbox2">
+                        <div class="col-md-5">
+                            <h2 style="padding-top: 18px; font-size:18px; color: #ef260f;">No. of Parents attending:</h2>
+                        </div>
+                        <div id="passParentOneWrap" class="col-md-3 checkbox">
                             <input style="visibility: visible;margin: 16px 0px 0px 4px;" class="checkbox"
-                                type="checkbox" name="parent_register" id="parentregistercheck" value="1"
+                                type="checkbox" name="no_of_parent" value="1" id="passParentOne"
                                 onclick="myFunction()">
-                            <label for="parent_register">Check here, if your Parent(s) have Registered for Puja</label>
+                            <label for="passParentOne">One</label>
+                        </div>
+                        <div id="passParentTwoWrap" class="col-md-3 checkbox">
+                            <input style="visibility: visible;margin: 16px 0px 0px 4px;" class="checkbox"
+                                type="checkbox" name="no_of_parent" value="2" id="passParentTwo"
+                                onclick="myFunction()">
+                            <label for="passParentTwo">Two</label>
                         </div>
                     </div>
 
@@ -848,6 +863,29 @@
                             <input class="MIDtext2" type="text" name="parent1_lname" id="parent_register_lname"
                                 placeholder="Parent Last Name *">
                             <div class="text_placeholders">Parent Last Name <span style="color:#ff0000;">*</span></div>
+                        </div>
+                        <div class="col-md-12 checkbox">
+                            <input style="visibility: visible;margin: 16px 0px 0px 4px;" class="checkbox"
+                                type="checkbox" id="parent_register_veggie" name="parent1_veggie" value="1">
+                            <label for="parent_register_veggie">Tick here, if Veggie</label>
+                        </div>
+                    </div>
+
+                    <div class="row" id="parent_register_details2" style="display:none;">
+                        <div class="col-md-6">
+                            <input class="MIDtext2" type="text" name="parent2_fname" id="parent_register2_fname"
+                                placeholder="Parent 2 First Name *">
+                            <div class="text_placeholders">Parent 2 First Name <span style="color:#ff0000;">*</span></div>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="MIDtext2" type="text" name="parent2_lname" id="parent_register2_lname"
+                                placeholder="Parent 2 Last Name *">
+                            <div class="text_placeholders">Parent 2 Last Name <span style="color:#ff0000;">*</span></div>
+                        </div>
+                        <div class="col-md-12 checkbox">
+                            <input style="visibility: visible;margin: 16px 0px 0px 4px;" class="checkbox"
+                                type="checkbox" id="parent_register2_veggie" name="parent2_veggie" value="1">
+                            <label for="parent_register2_veggie">Tick here, if Veggie</label>
                         </div>
                     </div>
 
@@ -1035,20 +1073,20 @@
                             <div id="text" style="display:none">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <input class="MIDtext2" style="width:100%;" type="text" name="parent1_fname"
+                                        <input class="MIDtext2" style="width:100%;" type="text"
                                             id="memparentfnamefam" placeholder="Parent 1 First Name" />
                                         <div class="text_placeholders">Parent 1 First Name</div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <input class="MIDtext2" style="width:100%;" type="text" name="parent1_lname"
+                                        <input class="MIDtext2" style="width:100%;" type="text"
                                             id="memparentlnamefam" placeholder="Parent 1 Last Name" />
                                         <div class="text_placeholders">Parent 1 Last Name</div>
                                     </div>
 
                                     <div class="col-md-4 checkbox">
                                         <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                            type="checkbox" id="veggie" name="parent1_veggie" value="1">
+                                            type="checkbox" id="legacy_parent1_veggie" value="1">
                                         <label for="veggie">Tick here, if Veggie</label>
                                     </div>
                                 </div>
@@ -1057,18 +1095,18 @@
                             <div id="text2" style="display:none">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <input class="MIDtext2" style="width:100%;" type="text" name="parent2_fname"
+                                        <input class="MIDtext2" style="width:100%;" type="text"
                                             id="memparent2fnamefam" placeholder="Parent 2 First Name" />
                                         <div class="text_placeholders">Parent 2 First Name</div>
                                     </div>
                                     <div class="col-md-4">
-                                        <input class="MIDtext2" style="width:100%;" type="text" name="parent2_lname"
+                                        <input class="MIDtext2" style="width:100%;" type="text"
                                             id="memparent2lnamefam" placeholder="Parent 2 Last Name" />
                                         <div class="text_placeholders">Parent 2 Last Name</div>
                                     </div>
                                     <div class="col-md-4 checkbox">
                                         <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                            type="checkbox" id="veggie" name="parent2_veggie" value="1">
+                                            type="checkbox" id="legacy_parent2_veggie" value="1">
                                         <label for="veggie">Tick here, if Veggie</label>
                                     </div>
                                 </div>
@@ -1082,6 +1120,7 @@
                             <input type="hidden" name="magazineamount" value="15">
                             <input type="text" name="puja_amount" id="pujapriceval">
                             <input type="text" name="member_status" id="hiddenpujaname">
+                            <input type="text" name="extraparentregistration" id="parentregprice">
 
                         </div>
                         <div class="row">
@@ -1640,26 +1679,27 @@
                             send a confirmation</div>
                         <div class="text"><strong>Step 3 : </strong>Make the payment </div>
                         <div class="text"><strong>1. </strong>Passes will be issued in limited quantities and will
-                            depend on overall registration level. Out of Towners and 22+ individual  children of Puja registrants
-                            will have higher priority and can submit requests for all the options offered. Greater
-                            Houston residents are open to apply for Thursday and Sunday Passes only. </div>
+                            depend on overall registration level. Out of Towners and 22+ individual children of Puja
+                            registrants will have higher priority and can submit requests for all the options offered.
+                            Greater Houston residents can apply
+                            for all options except for Friday and Saturday. </div>
                         <div class="text"><strong>2. </strong>Day Pass includes lunch and dinner. Evening Pass dinner
                             only. Both Day and Evening Passes include access to cultural programs </div>
                         <div class="text"><strong>3. </strong>For family registration, children allowed free subject to
-                            Year of Birth being 2002 or later.</div>
+                            Year of birth being 2003 or later.</div>
                         <div class="text"><strong>4. </strong>Parents cannot be included in Passes</div>
-                        <div class="text"><strong>5. </strong>Student rate applicable to FULL TIME students only. Part
+                        <!-- <div class="text"><strong>5. </strong>Student rate applicable to FULL TIME students only. Part
                             time or Executive MBA students are not eligible.</div>
                         <div class="text"><strong>6. </strong>Student with family only if the spouse is not working
-                        </div>
-                        <div class="text"><strong>7. </strong>OOT and Students need to submit relevant documents
-                            (Address proof for OOT/Student ID for Students) online. Registration team will validate and
+                        </div> -->
+                        <div class="text"><strong>5. </strong>Out of Towners are required to submit valid
+                            Address proof document online. Registration team will validate and
                             send a confirmation with an individualized payment link. You may blank off date of birth or
                             any other personal information</div>
-                        <div class="text"><strong>8. </strong>Student IDs must have an expiry date or an issue date
+                        <!-- <div class="text"><strong>8. </strong>Student IDs must have an expiry date or an issue date
                             within the last one year. If none available, submit a recent tuition fee payment receipt or
-                            a score card.</div>
-                        <div class="text"><strong>9. </strong>No onsite parking is available for Day/Evening Pass
+                            a score card.</div> -->
+                        <div class="text"><strong>6. </strong>No onsite parking is available for Day/Evening Pass
                             Registrants.. Registrants can use the free shuttle bus service or Uber/Lyft</div>
                     </div>
                 </div>
@@ -1671,9 +1711,18 @@
                     <div class="widget-content">
                         <div class="text">If you have any questions, please contact us</div>
                 <p style="padding-bottom:30px;"><span><i class="fa fa-envelope" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="mailto:registration@durgabari.org"> registration@durgabari.org</a></p>
-             <!--   <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+17134948782"> <strong style="font-size:26px;"> +1 713-494-8782</strong> <br><span style="font-size:20px;color:#000;">Enakshi Lahiri</span></a></p>  
-                <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18322478794"> <strong style="font-size:26px;">+1 832-247-8794</strong> <br><span style="font-size:20px;color:#000;">Urmimala Mukhopadhyay</span></a></p>  -->
-                <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18327234829"> <strong style="font-size:26px;">+1 832-677-0860</strong> <br><span style="font-size:20px;color:#000;">Subhas Das</span></a></p>
+              <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+18603825419"> <strong
+                                    style="font-size:26px;">+1 860-382-5419</strong> <br><span
+                                    style="font-size:20px;color:#000;">Sharmila</span></a></p>
+                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+18323027420"> <strong
+                                    style="font-size:26px;">+1 832-302-7420</strong> <br><span
+                                    style="font-size:20px;color:#000;">Sandip</span></a></p>
+                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+15407978261"> <strong
+                                    style="font-size:26px;">+1 540-797-8261</strong> <br><span
+                                    style="font-size:20px;color:#000;">Raj</span></a></p>
                     </div>
                 </div>
 
@@ -2173,35 +2222,136 @@
     //      document.getElementById("oot_category_individual").value = element.options[element.selectedIndex].value;
     // }
 
-    function myFunction() {
-        var checkBox = document.getElementById("myCheck");
-        var checkBox2 = document.getElementById("myCheck2");
-        var checkBox3 = document.getElementById("parentregistercheck");
-        var text = document.getElementById("text");
-        var textparent = document.getElementById("parent_register_details");
+    function getPaidPassSelectedBasePrice() {
+        const selectedPrice = parseFloat($("#ddlStatus").val());
+        return isNaN(selectedPrice) ? 0 : selectedPrice;
+    }
 
-        if (checkBox.checked == true) {
-            text.style.display = "block";
-            two.style.display = "none";
-        } else if (checkBox2.checked == true) {
-            text.style.display = "block";
-            text2.style.display = "block";
-            one.style.display = "none";
-        } else if (checkBox3.checked == true) {
-            textparent.style.display = "block";
+    function getPaidPassTotalWithoutParent() {
+        const currentTotal = parseFloat($("#total_value").val());
+        const previousParent = parseFloat($("#parentregprice").val());
+        if (!isNaN(currentTotal)) {
+            return currentTotal - (isNaN(previousParent) ? 0 : previousParent);
+        }
+        return getPaidPassSelectedBasePrice();
+    }
+
+    function resetPaidPassParentFields(clearSelection) {
+        if (clearSelection) {
+            $("#passParentOne").prop('checked', false);
+            $("#passParentTwo").prop('checked', false);
+        }
+        $("#passParentOneWrap").show();
+        $("#passParentTwoWrap").show();
+        $("#parent_register_details").hide();
+        $("#parent_register_details2").hide();
+        $("#parent_register_fname").val("").prop('required', false);
+        $("#parent_register_lname").val("").prop('required', false);
+        $("#parent_register2_fname").val("").prop('required', false);
+        $("#parent_register2_lname").val("").prop('required', false);
+        $("#parent_register_veggie").prop('checked', false);
+        $("#parent_register2_veggie").prop('checked', false);
+        $("#parentregprice").val("");
+    }
+
+    function getPaidPassParentPriceFor() {
+        const membertype = $("#pul2").val();
+        const membercategory = $("#memcatfam").val();
+        const studentcheckbox = document.getElementById('studentcheck');
+        const ootcheckbox = document.getElementById('ottcheck');
+
+        if (studentcheckbox && studentcheckbox.checked) {
+            return 'student';
+        }
+        if (membertype == "member" && ootcheckbox && ootcheckbox.checked && (membercategory == 'GD' || membercategory == 'GC' || membercategory == "")) {
+            return 'memberoot';
+        }
+        if (membertype == "nonmember" && ootcheckbox && ootcheckbox.checked && (membercategory == 'GD' || membercategory == 'GC' || membercategory == "")) {
+            return 'nonmemberoot';
+        }
+        return membertype;
+    }
+
+    function getParentRegistrationPujaPrice() {
+        const oneParent = $("#passParentOne").is(":checked");
+        const twoParents = $("#passParentTwo").is(":checked");
+        const parentCount = twoParents ? 2 : (oneParent ? 1 : 0);
+        const baseTotal = getPaidPassTotalWithoutParent();
+
+        if (parentCount === 0) {
+            $("#parentregprice").val("");
+            $("#total_value").val(baseTotal || "");
+            return;
+        }
+
+        const annualYtd = parseFloat($("#ytd1").val());
+        const donationAmount = parseFloat($("#totaldonation").val());
+        const futureYtd = (isNaN(annualYtd) ? 0 : annualYtd) + (isNaN(donationAmount) ? 0 : donationAmount);
+        if (futureYtd >= 400) {
+            $("#parentregprice").val("");
+            $("#total_value").val(baseTotal || "");
+            return;
+        }
+
+        const selectedText = $("#ddlStatus option:selected").text();
+        const parts = selectedText.split(" ");
+        const priceType = parts[0] || "";
+        const pujaName = $("#pul").val();
+        const priceFor = getPaidPassParentPriceFor();
+        if (!pujaName || !priceFor || !priceType || !getPaidPassSelectedBasePrice()) {
+            $("#parentregprice").val("");
+            $("#total_value").val(baseTotal || "");
+            return;
+        }
+
+        const url1 = $("#container-abc-url-id").text();
+        $.ajax({
+            type: "POST",
+            data: {
+                paymentfor: priceFor,
+                pyjaname: pujaName,
+                pricetype: priceType
+            },
+            url: url1 + "load.php?controller=PujaPaidpasses&action=getparentprice",
+            success: function (res) {
+                const parentPriceElement = $(res).filter("input#parentprice");
+                const unitParentPrice = parentPriceElement.length ? parseFloat(parentPriceElement[0].value) : 0;
+                const parentTotal = (isNaN(unitParentPrice) ? 0 : unitParentPrice) * parentCount;
+                $("#parentregprice").val(parentTotal || "");
+                $("#total_value").val((baseTotal || 0) + parentTotal);
+            }
+        });
+    }
+
+    function myFunction() {
+        const oneParent = document.getElementById("passParentOne");
+        const twoParents = document.getElementById("passParentTwo");
+
+        if (oneParent && oneParent.checked) {
+            $("#passParentTwo").prop('checked', false);
+            $("#passParentTwoWrap").hide();
+            $("#passParentOneWrap").show();
+            $("#parent_register_details").show();
+            $("#parent_register_details2").hide();
             $("#parent_register_fname").prop('required', true);
             $("#parent_register_lname").prop('required', true);
+            $("#parent_register2_fname").val("").prop('required', false);
+            $("#parent_register2_lname").val("").prop('required', false);
+            $("#parent_register2_veggie").prop('checked', false);
+        } else if (twoParents && twoParents.checked) {
+            $("#passParentOne").prop('checked', false);
+            $("#passParentOneWrap").hide();
+            $("#passParentTwoWrap").show();
+            $("#parent_register_details").show();
+            $("#parent_register_details2").show();
+            $("#parent_register_fname").prop('required', true);
+            $("#parent_register_lname").prop('required', true);
+            $("#parent_register2_fname").prop('required', true);
+            $("#parent_register2_lname").prop('required', true);
         } else {
-            two.style.display = "block";
-            one.style.display = "block";
-            text.style.display = "none";
-            text2.style.display = "none";
-            textparent.style.display = "none";
-            document.getElementById("parent_register_fname").value = "";
-            document.getElementById("parent_register_lname").value = "";
-            $("#parent_register_fname").prop('required', false);
-            $("#parent_register_lname").prop('required', false);
+            resetPaidPassParentFields(false);
         }
+        getParentRegistrationPujaPrice();
     }
 
     $("#pul").change(function () {
@@ -2213,9 +2363,7 @@
         $("#parent_register").hide();
         $("#membersearchdiv").hide();
         $("#memberinformationdiv").hide();
-        $("#parent_register_details").hide();
-        $("#parent_register_fname").val("");
-        $("#parent_register_lname").val("");
+        resetPaidPassParentFields(true);
 
         $("#admindoccheck").hide();
         document.getElementById("admincheckdocument").checked = false;
@@ -2229,9 +2377,7 @@
         var pyjaname = $("#pul").val();
         //for hide & clean previous select div value
         $("#ddlOptional").val("");
-        $("#parent_register_details").hide();
-        $("#parent_register_fname").val("");
-        $("#parent_register_lname").val("");
+        resetPaidPassParentFields(true);
         $("#ddlOptionalchild").val("");
         $("#dvOptionalchild1").hide();
         $("#dvOptionalchild2").hide();
@@ -2245,7 +2391,7 @@
 
         document.getElementById("studentcheck").checked = false;
         document.getElementById("ottcheck").checked = false;
-        document.getElementById("parentregistercheck").checked = false;
+        resetPaidPassParentFields(true);
 
         $("#admindoccheck").hide();
         document.getElementById("admincheckdocument").checked = false;
@@ -2470,6 +2616,7 @@
         $("#totaldonation").val("");
         $("#futureytd").val("");
         $("#total_value").val("");
+        resetPaidPassParentFields(true);
         //for hide & clean previous select div value
         $("#ddlOptional").val("");
         $("#ddlOptionalchild").val("");
@@ -3053,6 +3200,7 @@
 
 
         }
+        getParentRegistrationPujaPrice();
 
     }
 
@@ -3582,6 +3730,7 @@
         else {
             document.getElementById("total_value").value = pujaprice;
         }
+        getParentRegistrationPujaPrice();
     }
 
 

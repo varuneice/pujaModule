@@ -48,6 +48,8 @@
             <th><?php echo __('Puja Event'); ?></th> 
             <th><?php echo __('Amount'); ?></th>
             <th><?php echo __('Processed By'); ?></th>
+            <th><?php echo __('Projected Sponsorship Level'); ?></th>
+            <th><?php echo __('Parking'); ?></th>
             <th><?php echo __('Status'); ?></th>    
             <th class="icon-th"></th>
             <th class="icon-th"></th>
@@ -118,9 +120,11 @@
               <?php
                           } else {
                               ?>
-              <td><?php echo "User"; ?></td>
-              <?php
-                      } ?>
+               <td><?php echo "User"; ?></td>
+               <?php
+                       } ?>
+                    <td><?php echo $tpl['sankalpaarr'][$i]['sponsorLevel'] ?? ''; ?></td>
+                    <td><?php echo $tpl['sankalpaarr'][$i]['greenFieldParkingDecision'] ?? ''; ?></td>
                     <td>
                        <?php if ($statusactive == 'pending')  { ?>
                   <span class="label label-<?php echo $tpl['sankalpaarr'][$i]['Status']; ?>">

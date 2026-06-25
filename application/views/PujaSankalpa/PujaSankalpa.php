@@ -951,7 +951,7 @@
                 <!--Title -->
                  <div class="title-column col-lg-6 col-md-12 col-sm-12">
                     <img style="float:left;padding:20px" src="../1.svg" width="35%">
-					<img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
+					<img style="border-radius: 43px;float: left;padding: 0px; width: 25%" src="../merchandise.jpg">
                 </div>
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
@@ -1484,14 +1484,13 @@ if($mainadminrole == "true"){
                         <h2><span style="color: #ef260f;">General</span> Guidelines</h2>
                     </div>
                     <div class="widget-content">
-                       <div class="text">1. Puja Registration not mandatory for Puja Sankalpa or Haate Khori</div>
-                       <div class="text">2. Puja Sankalpa and Haate Khori to be live streamed  </div>
-                       <div class="text">3. Both In-person and online options are available. Online participants are eligible for a $20 discount</div>
-                       <div class="text">4. Out-of-Towners (OOT) are eligible for Puja Sankalpa at member rate. Please submit a proof of residence online. OOT and Students need to submit relevant documents (Address proof for OOT/Student ID for Students) online. Registration team will validate and send a confirmation with an individualized payment link. You may blank off date of birth or any other personal information </div>
-                       <div class="text">5. Puja Sankalpa can be offered in the names of own family members only, parents included. For extended family members, please make a separate Puja Sankalpa registration.</div>
-                       <div class="text">6. Be specific on the names to be offered for Puja Sankalpa including the name of the registrant if participating</div>
-                      <div class="text">7. Haate Khori: Please send photos of child(ren) & parents to registration@durgabari.org for live streaming.</div>
-                    
+                        <div class="text">1. This site is reserved for Haate Khori registration and also for Puja Sankalpa registration of Emerald and Diamond sponsors. Puja Sankalpa option for other categories of sponsors and general registrants are not being offered.</div>
+                        <div class="text">2. Both in-person and online live options are available for Barowari Puja Sankalpa. Barowari Puja events will be live streamed.</div>
+                        <div class="text">3. For all Tithi Puja events, only the in-person option will be available. There will be no live streaming.</div>
+                        <div class="text">4. Puja Sankalpa can be offered in the names of own family members only, parents included.</div>
+                        <div class="text">5. Be specific on the names to be offered for Puja Sankalpa including the name of the registrant if participating</div>
+                        <div class="text">6. Haate Khori: Please send photos of child(ren) & parents to registration@durgabari.org for live streaming.</div>
+                     
                     </div>
                 </div>
                             
@@ -1502,8 +1501,8 @@ if($mainadminrole == "true"){
                 <div class="widget-content">
                     <div class="text">If you have any questions, please contact us</div>
                         <p style="padding-bottom:30px;"><span><i class="fa fa-envelope" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="mailto:registration@durgabari.org"> registration@durgabari.org</a></p>
-                         <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18326909062"> <strong style="font-size:26px;"> +1 832-723-4829</strong> <br><span style="font-size:20px;color:#000;">Debashish Sarkar</span></a></p>
-                          <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18327234829"> <strong style="font-size:26px;"> +1 832-205-566</strong> <br><span style="font-size:20px;color:#000;">Amit Bhaduri</span></a></p>
+                         <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+13462571068"> <strong style="font-size:26px;">346-257-1068</strong> <br><span style="font-size:20px;color:#000;">Sampurna</span></a></p>
+                          <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18327234829"> <strong style="font-size:26px;">832-723-4829</strong> <br><span style="font-size:20px;color:#000;">Debashish</span></a></p>
         
                 </div>
             </div>
@@ -2119,8 +2118,8 @@ function setDirectSubmitMode(isDirectSubmit, isFreeSankalpa) {
 }
 
 function lockParticipationMode(hideMode) {
-    $("#modeparticipation").val("In-Person").prop("required", !hideMode);
-    $("#modeparticipation option[value='Live']").hide();
+    $("#modeparticipation").val("In-Person").prop("disabled", true).prop("required", false);
+    $("#modeparticipation option[value='Live']").show();
     if (hideMode) {
         $("#modeparticipation").hide();
     } else {
@@ -2130,7 +2129,7 @@ function lockParticipationMode(hideMode) {
 
 function resetParticipationMode() {
     $("#modeparticipation option[value='Live']").show();
-    $("#modeparticipation").show().prop("required", true);
+    $("#modeparticipation").show().prop("disabled", false).prop("required", true);
 }
 
 function applyParticipationModeForPujaName(pujaName) {
@@ -2273,6 +2272,16 @@ for (var i = 1; i <= n; i++) {
   childInput.setAttribute('id', 'childname');
   childInput.setAttribute('name', 'childname[]');
   rowDiv.appendChild(childInput);
+  var ageInput = document.createElement('input');
+  ageInput.setAttribute('type', 'number');
+  ageInput.setAttribute('min', '0');
+  ageInput.setAttribute('max', '99');
+  ageInput.setAttribute('required', true);
+  ageInput.setAttribute('class', 'childAgeInput');
+  ageInput.setAttribute('placeholder', 'Child ' + i + ' Age *');
+  ageInput.setAttribute('id', 'childage');
+  ageInput.setAttribute('name', 'childage[]');
+  rowDiv.appendChild(ageInput);
 }
 
 if (n > 0) {
@@ -2307,6 +2316,7 @@ document.getElementById("admincheckdocument").checked = false;
     $("#personsoffering").val("");
     $("#fullnamesponsorpuja").val("");
     $("#childname").val("");
+    $("#childage").val("");
     $("#personsoffering").val("");
     $("#fathernamehathekhori").val("");
     $("#mothernamehathekhori").val("");
@@ -3171,6 +3181,9 @@ function validatealternatephone(elem){
         const pujaamountcheck = parseInt($("#totalamount").val());
         var gotradata = $("#gotraname").val();
         var childnamehaatekhori = $("#childname").val();
+        var childagehaatekhori = $(".childAgeInput").filter(function () {
+            return $.trim($(this).val()) === "";
+        }).length > 0 ? "" : "ok";
         var hathekhorimothername = $("#mothernamehathekhori").val();
         var hathekhorifathername = $("#fathernamehathekhori").val();
         var pujaparticipation = $("#modeparticipation").val();
@@ -3191,13 +3204,14 @@ function validatealternatephone(elem){
         alert("Please fill all Required ( * ) fields.");
         return ;
         }
-        if(pujatype =="hathekhori"  && (gotradata == "" || childnamehaatekhori =="" || hathekhorimothername == "" || hathekhorifathername == "" || pujaparticipation == "" || userfirstname == "" || userlastname =="" || adstreetno == "" || adresidental =="" || adcity == "" || adstate =="" || adzipcode == "" || mainphone =="" || alternumber == "" || emaildata ==""))
+        if(pujatype =="hathekhori"  && (gotradata == "" || childnamehaatekhori =="" || childagehaatekhori == "" || hathekhorimothername == "" || hathekhorifathername == "" || pujaparticipation == "" || userfirstname == "" || userlastname =="" || adstreetno == "" || adresidental =="" || adcity == "" || adstate =="" || adzipcode == "" || mainphone =="" || alternumber == "" || emaildata ==""))
         { 
             alert("Please fill all Required ( * ) fields.");
             $("#personsoffering").prop('required', false);
             $("#fullnamesponsorpuja").prop('required', false);
             $("#gotraname").prop('required', true);
             $("#childname").prop('required', true);
+            $(".childAgeInput").prop('required', true);
             $("#mothernamehathekhori").prop('required', true);
             $("#fathernamehathekhori").prop('required', true);
             $("#modeparticipation").prop('required', true);
@@ -3541,6 +3555,7 @@ function datapuja(){
     $("#personsoffering").val("");
     $("#fullnamesponsorpuja").val("");
     $("#childname").val("");
+    $("#childage").val("");
     $("#personsoffering").val("");
     $("#fathernamehathekhori").val("");
     $("#mothernamehathekhori").val("");
@@ -3991,6 +4006,7 @@ $('#term').on('input', function() {
             $("#totalamount").val("");
             $("#childrenHaatekhori").val("");
             $("#childname").val("");
+            $("#childage").val("");
             $("#mothernamehathekhori").val("");
             $("#fathernamehathekhori").val("");
             $("#gotraname").val("");

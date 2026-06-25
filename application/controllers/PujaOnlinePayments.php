@@ -251,55 +251,12 @@ class PujaOnlinePayments extends App
     if (!empty($_POST['uploadNewDocument'])) {
       $data = array();
 
-      if (!empty($_FILES['image'])) {
-        $fileextension = $_FILES['image']['type'];
-        $newfileextension = explode("/", $fileextension);
-        $filetype = strtolower($newfileextension[1]);
-        if ($filetype == "pdf") {
-          require_once APP_PATH . 'helpers/uploader/class.upload.php';
-          $targetfolder = INSTALL_PATH . UPLOAD_PATH . 'avatar/thumb/';
-          $imgdata = $_FILES['image']['name'];
-          $newimgdata = explode(".", $imgdata);
-          $img_name = time();
-          //$finaldocumentname = $img_name.'.'.$newimgdata[1];
-          $finaldocumentname = $img_name . '.' . $filetype;
-          $targetfolder = $targetfolder . basename($finaldocumentname);
-
-          if (move_uploaded_file($_FILES['image']['tmp_name'], $targetfolder)) {
-            $data['addressavatar'] = $finaldocumentname;
-          } else {
-            echo "Problem uploading file";
-          }
-
-        }
-        if ($filetype != "pdf") {
-
-          require_once APP_PATH . 'helpers/uploader/class.upload.php';
-
-          $handle = new upload($_FILES['image']);
-
-          $img_name = time();
-
-          if ($handle->uploaded) {
-
-            $thumb_dest = INSTALL_PATH . UPLOAD_PATH . 'avatar/thumb/';
-
-            $handle->file_new_name_body = $img_name;
-            $handle->image_resize = true;
-            $handle->image_x = 200;
-            $handle->image_ratio_y = true;
-            $handle->allowed = array('image/*');
-            $handle->process($thumb_dest);
-
-            if ($handle->processed) {
-              $handle->clean();
-            } else {
-              echo 'error : ' . $handle->error;
-            }
-            $data['addressavatar'] = $handle->file_dst_name;
-          }
-        }
+      $documentUpload = $this->handlePujaRegistrationDocumentUpload($_FILES['image'] ?? array(), true);
+      if (!empty($documentUpload['error'])) {
+        echo "<div style='color:red;padding:20px;font-size:18px;'>Document Upload Error: " . htmlspecialchars($documentUpload['error'], ENT_QUOTES) . "</div>";
+        exit();
       }
+      $data['addressavatar'] = $documentUpload['filename'];
       $newAvatar = $data['addressavatar'];
       $userId = $_POST["userId"] ?? '';
       $membername = $_POST["memberName"] ?? '';
@@ -384,6 +341,86 @@ class PujaOnlinePayments extends App
   private function logPujaRegError($message) {
       $logFile = __DIR__ . '/../../pujaregistrationlog.log';
       file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, FILE_APPEND);
+  }
+
+  private function handlePujaRegistrationDocumentUpload($file, $required = false)
+  {
+      if (empty($file) || !isset($file['error']) || (int) $file['error'] === UPLOAD_ERR_NO_FILE) {
+          return $required ? array('error' => 'Please upload a document.') : array('filename' => '');
+      }
+
+      if ((int) $file['error'] !== UPLOAD_ERR_OK) {
+          return array('error' => 'The document could not be uploaded. Please try again.');
+      }
+
+      $maxSize = 8 * 1024 * 1024;
+      if ((int) ($file['size'] ?? 0) > $maxSize) {
+          return array('error' => 'Document file size must be 8 MB or less.');
+      }
+
+      $originalName = strtolower((string) ($file['name'] ?? ''));
+      $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+      $allowedExtensions = array('jpg', 'jpeg', 'png', 'pdf');
+      if (!in_array($extension, $allowedExtensions, true)) {
+          return array('error' => 'Only jpg, jpeg, png, or pdf documents are allowed.');
+      }
+
+      $uploadDir = INSTALL_PATH . UPLOAD_PATH . 'avatar/thumb/';
+      if (!is_dir($uploadDir)) {
+          return array('error' => 'Document upload folder is not available.');
+      }
+
+      $safeName = time() . '_' . mt_rand(1000, 9999);
+      if ($extension === 'pdf') {
+          $mime = function_exists('mime_content_type') ? (string) @mime_content_type($file['tmp_name']) : '';
+          $header = (string) @file_get_contents($file['tmp_name'], false, null, 0, 4);
+          if ($mime !== '' && stripos($mime, 'pdf') === false && $header !== '%PDF') {
+              return array('error' => 'The selected PDF document could not be verified.');
+          }
+
+          $filename = $safeName . '.pdf';
+          if (!move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+              return array('error' => 'Problem uploading document.');
+          }
+
+          return array('filename' => $filename);
+      }
+
+      $imageInfo = @getimagesize($file['tmp_name']);
+      if (empty($imageInfo[0]) || empty($imageInfo[1])) {
+          return array('error' => 'Document image could not be read.');
+      }
+
+      if ((int) $imageInfo[0] < 800 || (int) $imageInfo[1] < 500) {
+          return array('error' => 'Document image is too small or not clear enough. Please upload a clearer document.');
+      }
+
+      $aspectRatio = (float) $imageInfo[0] / max(1, (float) $imageInfo[1]);
+      if ($aspectRatio < 0.45 || $aspectRatio > 3.2) {
+          return array('error' => 'Document image is not framed clearly. Please upload the full document.');
+      }
+
+      require_once APP_PATH . 'helpers/uploader/class.upload.php';
+      $handle = new upload($file);
+      if (!$handle->uploaded) {
+          return array('error' => 'Problem uploading document image.');
+      }
+
+      $handle->file_new_name_body = $safeName;
+      $handle->image_resize = true;
+      $handle->image_x = 200;
+      $handle->image_ratio_y = true;
+      $handle->allowed = array('image/*');
+      $handle->process($uploadDir);
+
+      if (!$handle->processed) {
+          return array('error' => $handle->error ?: 'Problem processing document image.');
+      }
+
+      $filename = $handle->file_dst_name;
+      $handle->clean();
+
+      return array('filename' => $filename);
   }
 
   function PujaOnlinePayments() {
@@ -475,32 +512,13 @@ class PujaOnlinePayments extends App
         }
 
         $data = array();
-        if (!empty($_FILES['image'])) {
-
-          require_once APP_PATH . 'helpers/uploader/class.upload.php';
-
-          $handle = new upload($_FILES['image']);
-
-          $img_name = time();
-
-          if ($handle->uploaded) {
-
-            $thumb_dest = INSTALL_PATH . UPLOAD_PATH . 'avatar/thumb/';
-
-            $handle->file_new_name_body = $img_name;
-            $handle->image_resize = true;
-            $handle->image_x = 200;
-            $handle->image_ratio_y = true;
-            $handle->allowed = array('image/*');
-            $handle->process($thumb_dest);
-
-            if ($handle->processed) {
-              $handle->clean();
-            } else {
-              echo 'error : ' . $handle->error;
-            }
-            $data['addressavatar'] = $handle->file_dst_name;
-          }
+        $documentUpload = $this->handlePujaRegistrationDocumentUpload($_FILES['image'] ?? array(), false);
+        if (!empty($documentUpload['error'])) {
+            echo "<div style='color:red;padding:20px;font-size:18px;'>Document Upload Error: " . htmlspecialchars($documentUpload['error'], ENT_QUOTES) . "</div>";
+            exit();
+        }
+        if (!empty($documentUpload['filename'])) {
+            $data['addressavatar'] = $documentUpload['filename'];
         }
 
         $id = null;

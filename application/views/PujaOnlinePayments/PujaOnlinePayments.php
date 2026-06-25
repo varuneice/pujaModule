@@ -623,6 +623,59 @@
             width: 410px;
         }
     }
+
+    #greenFieldParkingModal {
+        display: none;
+        position: fixed;
+        z-index: 99999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .greenFieldParking-modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 24px;
+        border: 1px solid #888;
+        width: min(520px, calc(100% - 32px));
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .greenFieldParking-modal-content .subHeading {
+        margin: 12px 0 20px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .greenFieldParking-btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 12px 14px;
+        border: 0;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .greenFieldParking-continue-btn {
+        background: #1f8b4c;
+    }
+
+    .greenFieldParking-change-btn {
+        background: #c0392b;
+    }
+
+    .greenFieldParking-cancel-btn {
+        background: #555;
+    }
 </style>
 <title>Puja Registration</title>
 <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
@@ -640,11 +693,12 @@
     <div class="auto-container">
         <div class="row clearfix">
             <!--Title -->
-            <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                <img style="float:left;padding:20px" src="../1.svg" width="35%">
-                <!-- <img style="float:left;padding:20px" src="../3.svg" width="35%"> -->
-                <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
-            </div>
+            <?php
+            if (!defined("ROOT_PATH")) {
+                define("ROOT_PATH", dirname(__FILE__) . '/');
+            }
+            include_once ROOT_PATH . 'application/templates/title_images.php';
+            ?>
             <!--Bread Crumb -->
             <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
                 <h1>Houston Durga Bari Society</h1>
@@ -799,10 +853,11 @@
                         <div class="col-md-12">
                             <select required="" name='member_newstatus' id='ddlStatus' class="choice">
                             </select>
-                            <div id="duplicatePujaRegistrationMessage"
-                                class="text_placeholders"
-                                style="display:none;margin-top:10px;text-align:left;font-size:18px;line-height:28px;font-weight:700;">
-                                This member is already registered for Puja for the current season.
+                            <div class="col-md-12" style="display:none;" id="alredayRegisterDiv">
+                                <div class="text_placeholders" id="alredayRegisterMessage"
+                                    style="font-size: 24px;padding: 10px;color: #adff2f;background-color: #000;margin-top: 12px;border-radius: 10px;text-transform: uppercase;line-height: 30px;text-align: center;font-weight: 700;">
+                                    You have already done Puja Registration
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -889,98 +944,6 @@
                             <!-- <input type="hidden" name="member_puja_family_amount" value="400"> -->
 
                             <div id="childinputdiv" style="display:none;">
-                                <div class="row" id="adultChildOptInRow" style="display:none;">
-                                    <div class="col-md-12 checkbox">
-                                        <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                            type="checkbox" id="coRegisterAdultChildren" name="co_register_adult_members"
-                                            value="1" onchange="toggleAdultChildRegistration()">
-                                        <label for="coRegisterAdultChildren">Do you want to co-register 22+ unmarried adult members?</label>
-                                    </div>
-                                </div>
-                                <div class="row" id="adultChildCountRow">
-                                <div class="col-md-12">
-                                    <select class="choice2" name="member_optional_child" id="ddlOptionalchild">
-                                        <option value="">No. of 22+ Unmarried Adult(s)</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                    <input type="hidden" name="adult_member_count" id="adultMemberCount" value="">
-                                    <div class="text_placeholders">No. of 22+ Unmarried Adult(s) YOB 2003 or earlier</div>
-                                </div>
-                                </div>
-                                <div id="dvAdultMember1" style="display:none;">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult1_fname"
-                                                id="adult1fname" readonly placeholder="Adult First Name" />
-                                            <div class="text_placeholders">Adult First Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult1_lname"
-                                                id="adult1lname" readonly placeholder="Adult Last Name" />
-                                            <div class="text_placeholders">Adult Last Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult1_birth_year"
-                                                id="adult1birthyear" readonly placeholder="Birth Year" />
-                                            <div class="text_placeholders">Adult Birth Year</div>
-                                        </div>
-                                        <div class="col-md-4 checkbox">
-                                            <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                                type="checkbox" id="adult1veggie" name="adult1_veggie" value="1">
-                                            <label for="adult1veggie">Tick here, if Veggie</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="dvAdultMember2" style="display:none;">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult2_fname"
-                                                id="adult2fname" readonly placeholder="Adult First Name" />
-                                            <div class="text_placeholders">Adult First Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult2_lname"
-                                                id="adult2lname" readonly placeholder="Adult Last Name" />
-                                            <div class="text_placeholders">Adult Last Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult2_birth_year"
-                                                id="adult2birthyear" readonly placeholder="Birth Year" />
-                                            <div class="text_placeholders">Adult Birth Year</div>
-                                        </div>
-                                        <div class="col-md-4 checkbox">
-                                            <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                                type="checkbox" id="adult2veggie" name="adult2_veggie" value="1">
-                                            <label for="adult2veggie">Tick here, if Veggie</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="dvAdultMember3" style="display:none;">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult3_fname"
-                                                id="adult3fname" readonly placeholder="Adult First Name" />
-                                            <div class="text_placeholders">Adult First Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult3_lname"
-                                                id="adult3lname" readonly placeholder="Adult Last Name" />
-                                            <div class="text_placeholders">Adult Last Name</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input class="MIDtext2" style="width:100%;" type="text" name="adult3_birth_year"
-                                                id="adult3birthyear" readonly placeholder="Birth Year" />
-                                            <div class="text_placeholders">Adult Birth Year</div>
-                                        </div>
-                                        <div class="col-md-4 checkbox">
-                                            <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
-                                                type="checkbox" id="adult3veggie" name="adult3_veggie" value="1">
-                                            <label for="adult3veggie">Tick here, if Veggie</label>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div id="dvOptionalchild1" style="display:block;">
@@ -1065,6 +1028,98 @@
                                         <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
                                             type="checkbox" id="childthreeveggie" name="childthree_veggie" value="1">
                                         <label for="childthreeveggie">Tick here, if Veggie</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="adultChildOptInRow" style="display:none;">
+                                <div class="col-md-12 checkbox">
+                                    <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
+                                        type="checkbox" id="coRegisterAdultChildren" name="co_register_adult_members"
+                                        value="1" onchange="toggleAdultChildRegistration()">
+                                    <label for="coRegisterAdultChildren">Do you want to co-register 22+ unmarried adult members?</label>
+                                </div>
+                            </div>
+                            <div class="row" id="adultChildCountRow" style="display:none;">
+                                <div class="col-md-12">
+                                    <select class="choice2" name="member_optional_child" id="ddlOptionalchild">
+                                        <option value="">No. of 22+ Unmarried Adult(s)</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                    <input type="hidden" name="adult_member_count" id="adultMemberCount" value="">
+                                    <div class="text_placeholders">No. of 22+ Unmarried Adult(s) YOB 2003 or earlier</div>
+                                </div>
+                            </div>
+                            <div id="dvAdultMember1" style="display:none;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult1_fname"
+                                            id="adult1fname" readonly placeholder="Adult First Name *" />
+                                        <div class="text_placeholders">Adult First Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult1_lname"
+                                            id="adult1lname" readonly placeholder="Adult Last Name *" />
+                                        <div class="text_placeholders">Adult Last Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult1_birth_year"
+                                            id="adult1birthyear" readonly placeholder="Birth Year *" />
+                                        <div class="text_placeholders">Adult Birth Year *</div>
+                                    </div>
+                                    <div class="col-md-4 checkbox">
+                                        <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
+                                            type="checkbox" id="adult1veggie" name="adult1_veggie" value="1">
+                                        <label for="adult1veggie">Tick here, if Veggie</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="dvAdultMember2" style="display:none;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult2_fname"
+                                            id="adult2fname" readonly placeholder="Adult First Name *" />
+                                        <div class="text_placeholders">Adult First Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult2_lname"
+                                            id="adult2lname" readonly placeholder="Adult Last Name *" />
+                                        <div class="text_placeholders">Adult Last Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult2_birth_year"
+                                            id="adult2birthyear" readonly placeholder="Birth Year *" />
+                                        <div class="text_placeholders">Adult Birth Year *</div>
+                                    </div>
+                                    <div class="col-md-4 checkbox">
+                                        <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
+                                            type="checkbox" id="adult2veggie" name="adult2_veggie" value="1">
+                                        <label for="adult2veggie">Tick here, if Veggie</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="dvAdultMember3" style="display:none;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult3_fname"
+                                            id="adult3fname" readonly placeholder="Adult First Name *" />
+                                        <div class="text_placeholders">Adult First Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult3_lname"
+                                            id="adult3lname" readonly placeholder="Adult Last Name *" />
+                                        <div class="text_placeholders">Adult Last Name *</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="MIDtext2" style="width:100%;" type="text" name="adult3_birth_year"
+                                            id="adult3birthyear" readonly placeholder="Birth Year *" />
+                                        <div class="text_placeholders">Adult Birth Year *</div>
+                                    </div>
+                                    <div class="col-md-4 checkbox">
+                                        <input style="visibility: visible;margin: 34px 0px 0px 4px;" class="checkbox"
+                                            type="checkbox" id="adult3veggie" name="adult3_veggie" value="1">
+                                        <label for="adult3veggie">Tick here, if Veggie</label>
                                     </div>
                                 </div>
                             </div>
@@ -1232,7 +1287,7 @@
                             <div class="col-md-4">
                                 <input class="number" id="totaldonation" style="width:100%;" type="number"
                                     name="donation" value="" min="25" placeholder="Donation ($)"
-                                    oninput="amountvalid(this.id)" onchange="amountvalid(this.id)" />
+                                    onchange="amountvalid(this.id)" />
                                 <div class="text_placeholders">Donation($)</div>
                             </div>
                             <div class="col-md-4">
@@ -1317,7 +1372,7 @@
                                                                     </tr>
                                                                     <tr class="tr" id="diamondtr">
                                                                         <td class="td"
-                                                                            style="background-color:red;color:black;">
+                                                                            style="background-color:#cc2900;color:white;">
                                                                             Diamond</td>
                                                                         <td class="td" id="diamond">$5000+( Registration
                                                                             optional)</td>
@@ -1331,19 +1386,21 @@
                                                                             style="background-color:#98FB98;color:black;">
                                                                             Emerald</td>
                                                                         <td class="td" id="emerald"
-                                                                            style="background-color:white;">$2000+</td>
-                                                                        <td class="td" rowspan="2">Main or Kala Bhavan
-                                                                            (KB)Parking<br>
+                                                                            style="background-color:white;">$2200 -
+                                                                            $4559</td>
+                                                                        <td class="td">Main Parking<br>
                                                                             (in order of date of Sponsorship)</td>
 
 
                                                                     </tr>
                                                                     <tr class="tr" id="platinumtr">
                                                                         <td class="td"
-                                                                            style="background-color:blue;color:white;">
+                                                                            style="background-color:#000080;color:white;">
                                                                             Platinum</td>
-                                                                        <td class="td" id="platinum">$1200 - $1999</td>
-                                                                        <!-- <td class="td"></td> -->
+                                                                        <td class="td" id="platinum">$1500 - $2199</td>
+                                                                        <td class="td">Main or Kala Bhavan
+                                                                            (KB)Parking<br>
+                                                                            (in order of date of Sponsorship)</td>
 
                                                                     </tr>
                                                                     <tr class="tr" id="goldtr">
@@ -1351,12 +1408,9 @@
                                                                             style="background-color:yellow;color:black;">
                                                                             Gold</td>
                                                                         <td class="td" id="gold"
-                                                                            style="background-color:white;">$800 - $1199
+                                                                            style="background-color:white;">$1000 - $1499
                                                                         </td>
-                                                                        <td class="td">Green Field<br>Prioritized
-                                                                            upgrade to KB Parking if space
-                                                                            available.<br> Kb Parking for CT Gold
-                                                                            Sponsors.</td>
+                                                                        <td class="td">Green Field. <br> KB Parking for CT Gold Sponsors</td>
 
                                                                     </tr>
 
@@ -1364,11 +1418,9 @@
                                                                         <td class="td"
                                                                             style="background-color:#E6E6FA;color:black;">
                                                                             Silver</td>
-                                                                        <td class="td" id="silver">$400 - $799</td>
+                                                                        <td class="td" id="silver">$750 - $999</td>
                                                                         <td class="td"
-                                                                            style="background-color: #f3f4f5;">Jain
-                                                                            Temple <br>(Subject to
-                                                                            availability;Specified days only)</td>
+                                                                            style="background-color: #f3f4f5;">Green Field. <br> KB Parking for CT Senior Silver Sponsors</td>
                                                                     </tr>
                                                                 </tbody>
 
@@ -1458,22 +1510,23 @@
                             <a style="text-decoration: none; color: #333; font-weight: 700;"
                                 href="https://durgabari.org/payments/" target="_blank">Click here for Membership</a>.
                         </div>
-                        <!-- Dinner/food coupon registration removed per 2026 client change.
-                        <div class="text">2. Registration provides access to the auditorium for cultural programs and
-                            free food coupons</div>
-                        -->
+                        <div class="text">2. Registration provides access to the auditorium for cultural programs.</div>
                         <div class="text">3. All 3 Pujas and Durga Puja registrants eligible for a free copy of Sharad
-                            Arghya, the Puja Magazine  Kali Puja and Saraswati Puja registrants 
+                            Arghya, the Puja Magazine Kali Puja and Saraswati Puja registrants 
                             can purchase at the time of registration, subject to available copies</div>
                         <div class="text">4. Children of registrants above 22* years must register separately.</div>
                         <div class="text">5. *Age limit to be relaxed to 26 years for children if unmarried and still a
                             student or unemployed. Please contact registration team with details.</div>
                         <div class="text">6. Returning Users: Please contact the Registration team or HDBS Treasurer to
                             add (newly born) children or to update primary email address and phone number</div>
-                            <div class="text">7.  Senior discount applies to a minimum age of 70 years and refers to the primary registrant and spouse only (and not to any accompanying parents)</div>
-                            <div class="text">8. Out-of-Towners (OOT) are eligible for registration at Member rates irrespective of membership status</div>
-                            <div class="text">9. Parents visiting from abroad or residing with the registrants as dependents can be included free of cost with Sliver+ sponsorship. Nominal rates apply in other cases.</div>
-                            <div class="text">10. Student rate applicable to FULL TIME students only. Part time or Executive
+                        <div class="text">7. Senior discount applies to a minimum age of 70 years and refers to the
+                            primary registrant and spouse only (and not to any accompanying parents)</div>
+                        <div class="text">8. Out-of-Towners (OOT) are eligible for registration at Member rates
+                            irrespective of membership status</div>
+                        <div class="text">9. Parents visiting from abroad or residing with the registrants as dependents
+                            can be included free of cost with Sliver+ sponsorship. Nominal rates apply in other cases.
+                        </div>
+                        <div class="text">10. Student rate applicable to FULL TIME students only. Part time or Executive
                             MBA students are not eligible. </div>
                         <div class="text">11. Students opting for family registration can include spouse only if spouse
                             is not employed.</div>
@@ -1485,8 +1538,12 @@
                             information</div>
                         <div class="text">14. Student IDs must have an expiry date or an issue date within the last one
                             year. If none available, submit a recent tuition fee payment receipt or a score card. </div>
-                        <div class="text">15. Returning Users: Contact the Registration team or HDBS Treasurer to update
-                            address and primary contact information</div>
+                        <div class="text">15. Puja Benefactors (minimum YTD $150 for Seniors,
+                          $300 for general Registrants) may apply for Green
+                          Field Parking via the Puja Benefactor icon.
+                          Registration is mandatory to apply. Parking
+                          privilege is subject to availability.
+                        </div>
                     </div>
                 </div>
 
@@ -1504,13 +1561,17 @@
                                     style="font-size:26px;"> +1 713-494-8782</strong> <br><span
                                     style="font-size:20px;color:#000;">Enakshi Lahiri</span></a></p> -->
                         <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
-                                style="color:#000;text-decoration:none;" href="tel:+18322055665"> <strong
-                                    style="font-size:26px;"> +1 832-205-5665</strong> <br><span
-                                    style="font-size:20px;color:#000;">Amit Bhaduri</span></a></p>
+                                style="color:#000;text-decoration:none;" href="tel:+14134046740"> <strong
+                                    style="font-size:26px;">413-404-6740</strong> <br><span
+                                    style="font-size:20px;color:#000;">Sourima</span></a></p>
                         <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
-                                style="color:#000;text-decoration:none;" href="tel:+18326770860"> <strong
-                                    style="font-size:26px;"> +1 832-677-0860</strong> <br><span
-                                    style="font-size:20px;color:#000;">Subhas Das</span></a></p>
+                                style="color:#000;text-decoration:none;" href="tel:+18327234829"> <strong
+                                    style="font-size:26px;">832-723-4829</strong> <br><span
+                                    style="font-size:20px;color:#000;">Debashish</span></a></p>
+                        <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a
+                                style="color:#000;text-decoration:none;" href="tel:+18322055665"> <strong
+                                    style="font-size:26px;">832-205-5665</strong> <br><span
+                                    style="font-size:20px;color:#000;">Amit</span></a></p>
 
                     </div>
                 </div>
@@ -1519,6 +1580,19 @@
         </div>
 
 
+    </div>
+</div>
+
+<div id="greenFieldParkingModal">
+    <div class="greenFieldParking-modal-content">
+        <p><strong>Parking for Silver, Gold and Platinum sponsors are no longer available</strong></p>
+        <div class="subHeading">Are you sure you want to continue with your donation?</div>
+        <button type="button" class="greenFieldParking-btn greenFieldParking-continue-btn"
+            onclick="handleGreenFieldParkingChoice('Continue without parking')">Continue without parking</button>
+        <button type="button" class="greenFieldParking-btn greenFieldParking-change-btn"
+            onclick="handleGreenFieldParkingChoice('donation')">Change my donation</button>
+        <button type="button" class="greenFieldParking-btn greenFieldParking-cancel-btn"
+            onclick="handleGreenFieldParkingChoice('Cancelled')">Cancel</button>
     </div>
 </div>
 
@@ -1544,27 +1618,46 @@
         return null;
     }
 
+    function getPujaYtdTierByName(name) {
+        var expectedName = (name || '').toLowerCase();
+        for (var i = 0; i < pujaYtdTiers.length; i++) {
+            var tier = pujaYtdTiers[i];
+            var tierName = tier && tier.tier_name ? tier.tier_name.toLowerCase() : '';
+            if (tierName === expectedName) {
+                return tier;
+            }
+        }
+
+        return null;
+    }
+
+    function getPujaYtdTierMin(name, fallback) {
+        var tier = getPujaYtdTierByName(name);
+        var minAmount = tier ? parseFloat(tier.min_amount) : NaN;
+        return isNaN(minAmount) ? fallback : minAmount;
+    }
+
     function getPujaYtdParkingMessage(amount, membertype, isRegisteredForParkingPuja) {
+        decodeURI
         var tier = getPujaYtdTier(amount);
         var tierName = tier && tier.tier_name ? tier.tier_name.toLowerCase() : '';
         var isPmOrFp = membertype === "PM" || membertype === "FP";
-        var suffix = isRegisteredForParkingPuja ? ", contingent on Puja registration (All 3 Pujas / Durga Puja)." : ".";
 
         if (tierName === 'silver') {
             return isPmOrFp && isRegisteredForParkingPuja
-                ? "On completion of your payment, you will be assigned  Kala Bhavan Parking, contingent on Puja registration (All 3 Pujas / Durga Puja)."
-                : "On completion of your payment, you will have the  option for parking at Green Field at a discounted rate, contingent on Puja registration (All 3 Pujas / Durga Puja). Visit Associated Payments/Paid Parking after your Registration";
+                ? "On completion of your payment, you will be assigned Kala Bhavan Parking, contingent on Puja registration (All 3 Pujas / Durga Puja)."
+                : "On completion of your payment, you will be assigned parking at Green Field, contingent on Puja registration (All 3 Pujas / Durga Puja).";
         }
         if (tierName === 'gold') {
             return isPmOrFp && isRegisteredForParkingPuja
-                ? "On completion of your payment, you will be assigned  Kala Bhavan Parking, contingent on Puja registration (All 3 Pujas / Durga Puja)."
-                : "On completion of your payment, you will be assigned Gold Sponsor Parking" + suffix;
+                ? "On completion of your payment, you will be assigned Kala Bhavan Parking, contingent on Puja registration (All 3 Pujas / Durga Puja)."
+                : "On completion of your payment, you will be assigned Gold Sponsor Parking, contingent on Puja registration (All 3 Pujas / Durga Puja).";
         }
         if (tierName === 'platinum') {
-            return "On completion of your payment, you will be assigned Main or Kala Bhavan(KB) Parking" + suffix;
+            return "On completion of your payment, you will be assigned Main or Kala Bhavan(KB) Parking, contingent on Puja registration (All 3 Pujas / Durga Puja).";
         }
         if (tierName === 'emerald' || tierName === 'diamond' || isPujaYtdEmeraldDiamondGap(amount)) {
-            return "On completion of your payment, you will be assigned Main Parking" + suffix;
+            return "On completion of your payment, you will be assigned Main Parking, contingent on Puja registration (All 3 Pujas / Durga Puja).";
         }
 
         return "";
@@ -2223,11 +2316,11 @@
     function setPujaRegistrationDuplicateState(isDuplicate, message) {
         var buttons = $("#gocartbutton, #documentsubmitbuttondiv button[type='submit'], #addcartbuttondiv button[type='submit']");
         if (message) {
-            $("#duplicatePujaRegistrationMessage").text(message);
+            $("#alredayRegisterMessage").text(message);
         } else {
-            $("#duplicatePujaRegistrationMessage").text("This member is already registered for Puja for the current season.");
+            $("#alredayRegisterMessage").text("You have already done Puja Registration");
         }
-        $("#duplicatePujaRegistrationMessage").toggle(!!isDuplicate);
+        $("#alredayRegisterDiv").toggle(!!isDuplicate);
         buttons.prop("disabled", !!isDuplicate);
         buttons.toggleClass("disabled", !!isDuplicate);
     }
@@ -2259,9 +2352,13 @@
 
     function isAdultChildEligibleMember() {
         var membertype = $("#pul2").val();
-        var membercategory = $.trim($("#memcatfam").val()).toUpperCase();
         var selectedStatus = $.trim($("#ddlStatus option:selected").text() || "").split(" ")[0].toLowerCase();
-        return membertype == "member" && (selectedStatus == "family" || selectedStatus == "individual") && membercategory !== "" && membercategory !== "GD" && membercategory !== "GC";
+        return membertype == "member" && (selectedStatus == "family" || selectedStatus == "individual") && !isGdGcMembershipCategory();
+    }
+
+    function isGdGcMembershipCategory() {
+        var membercategory = $.trim($("#memcatfam").val()).toUpperCase();
+        return membercategory === "" || membercategory === "GD" || membercategory === "GC";
     }
 
     var adultChildMemberSnapshot = null;
@@ -2457,6 +2554,13 @@
         updateAdultChildPriceSummary();
     }
 
+    function hideAdultChildRegistrationOption() {
+        $("#adultChildOptInRow").hide();
+        $("#adultChildCountRow").hide();
+        $("#ddlOptionalchild").hide();
+        resetAdultChildRegistration();
+    }
+
     function updateAdultChildPriceSummary() {
         var childAmount = parseFloat($("#adultregprice").val());
         if (!isNaN(childAmount) && childAmount > 0) {
@@ -2472,7 +2576,7 @@
         var eligibleCount = syncAdultChildDropdownOptions();
         if (eligibleCount <= 0) {
             $("#childinputdiv").hide();
-            resetAdultChildRegistration();
+            hideAdultChildRegistrationOption();
             return;
         }
         captureAdultChildMemberSnapshot();
@@ -3130,7 +3234,7 @@ function getParentRegistrationPujaPrice(){
         $("#ddlOptional").val("");
         $("#ddlOptionalchild").val("");
         $("#adultChildOptInRow").hide();
-        $("#adultChildCountRow").show();
+        $("#adultChildCountRow").hide();
         $("#coRegisterAdultChildren").prop("checked", false);
         $("#adultregprice").val("");
         updateAdultChildPriceSummary();
@@ -3415,6 +3519,10 @@ function getParentRegistrationPujaPrice(){
             $("#total_value").val("");
         }
 
+        if (isGdGcMembershipCategory()) {
+            hideAdultChildRegistrationOption();
+        }
+
         syncFilledChildRowsVisibility();
     });
 
@@ -3517,6 +3625,25 @@ function getParentRegistrationPujaPrice(){
             $("#newplatinumtd").remove();
             $("#newgold").remove();
             $("#newsilvertd").remove();
+
+            var ytdAmount = parseFloat(ytd) || 0;
+            function sponsorNeeded(minAmount) {
+                var needed = minAmount - ytdAmount;
+                return needed > 0 ? "$" + needed : "";
+            }
+
+            var newdiamondprice = sponsorNeeded(getPujaYtdTierMin('diamond', 5000));
+            var newemeraldprice = sponsorNeeded(getPujaYtdTierMin('emerald', 2200));
+            var newplatinumprice = sponsorNeeded(getPujaYtdTierMin('platinum', 1500));
+            var newgoldprice = sponsorNeeded(getPujaYtdTierMin('gold', 1000));
+            var newsilverprice = sponsorNeeded(getPujaYtdTierMin('silver', 750));
+
+            $('#diamondtr').append(`<td class="td" id="newdiamondtd"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btngrand" onclick="buttonval(this)" class="form-control" value="${newdiamondprice}"></td>`);
+            $('#emeraldtr').append(`<td class="td" id="newemeraldtd"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btngold" onclick="buttonval(this)" class="form-control" value="${newemeraldprice}"></td>`);
+            $('#platinumtr').append(`<td class="td" id="newplatinumtd"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btnsilver" onclick="buttonval(this)" class="form-control" value="${newplatinumprice}"></td>`);
+            $('#goldtr').append(`<td class="td" id="newgold"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btnsilver" onclick="buttonval(this)" class="form-control" value="${newgoldprice}"></td>`);
+            $('#silvertr').append(`<td class="td" id="newsilvertd"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btnplat" onclick="buttonval(this)" class="form-control" value="${newsilverprice}"></td>`);
+            return;
 
             if (ytd == 0 || ytd == null || ytd == "") {
                 $('#diamondtr').append(`<td class="td"  id="newdiamondtd"><input style="font-size:20px;font-weight:bold;color:rgb(173 255 47);background-color:black;text-align: center;" readonly type="text" id="btngrand" class="form-control" value= "${diamondfinal}"></td>`);
@@ -4026,10 +4153,13 @@ function getParentRegistrationPujaPrice(){
             document.getElementById("futureytd").value = futureYtd;
             var isRegisteredForParkingPuja = txtselectpujaname.indexOf("All 3 Pujas") !== -1 || txtselectpujaname.indexOf("Durga Puja") !== -1;
             var tier = getPujaYtdTier(futureYtd);
-            if (tier && (tier.tier_name || '').toLowerCase().indexOf('base') === 0) {
+            var tierName = tier && tier.tier_name ? tier.tier_name.toLowerCase() : '';
+            var silverMinAmount = getPujaYtdTierMin('silver', 750);
+            if (futureYtd > 25 && futureYtd < silverMinAmount) {
                 $("#sponsorcheck").show();
                 $("#greenFieldParkingDecision").val("");
                 $("#ytdmess").hide();
+                $("#featureytddiv").hide();
             } else {
                 $("#sponsorcheck").hide();
                 showPujaYtdParkingMessage(futureYtd, membertype, isRegisteredForParkingPuja);
@@ -5057,7 +5187,7 @@ function getParentRegistrationPujaPrice(){
         });
         $('form[id="pujaregistration-frm-id"]').validate({
             submitHandler: function (form) {
-                if ($("#duplicatePujaRegistrationMessage").is(":visible")) {
+                if ($("#alredayRegisterDiv").is(":visible")) {
                     return false;
                 }
                 if ($("#documentuploaddiv").is(":visible") && !documentUploadValid) {
@@ -5118,6 +5248,25 @@ function getParentRegistrationPujaPrice(){
             case "Saraswati Puja":
                 $("#parentPuja").append(pujaOption3);
                 break;
+        }
+    }
+
+    function showGreenFieldParkingPopup() {
+        document.getElementById("greenFieldParkingModal").style.display = "block";
+        document.getElementById("greenFieldParkingDecision").value = "";
+    }
+
+    function handleGreenFieldParkingChoice(choice) {
+        document.getElementById("greenFieldParkingDecision").value = choice;
+        document.getElementById("greenFieldParkingModal").style.display = "none";
+
+        console.log("Green field parking choice:", choice);
+        if (choice == "Cancelled") {
+            document.getElementById("pujaregistration-frm-id").reset();
+        }
+
+        if (choice == "donation") {
+            document.getElementById("totaldonation").focus();
         }
     }
 

@@ -1,4 +1,4 @@
-﻿<style>
+<style>
  @media only screen and (max-width: 499px){
 		 .right-side {
               margin-left:0px!important;
@@ -48,6 +48,7 @@
             <th><?php echo __('Payment Method'); ?></th>
             <th><?php echo __('Pay Type'); ?></th>
             <th><?php echo __('Processed By'); ?></th>
+             <!--<th><?php echo __('Parking'); ?></th>-->
             <th><?php echo __('Status'); ?></th>   
             <th class="icon-th" style="display:none;"></th>
             <th class="icon-th" style="display:none;"></th>
@@ -59,7 +60,8 @@
         $status_arr = __('status_arr');
         if ($count > 0) {
             for ($i = 0; $i < $count; $i++) {
-                $datadesc = $tpl['Donationarr'][$i]['id'];
+                $dataid = $tpl['Donationarr'][$i]['id'] ?? '';
+                $datadesc = $dataid;
                 $today = date("m/d/Y"); 
                 $statusconfirmed = "Confirmed";
                $status = "Payment Failed";
@@ -83,6 +85,13 @@
                     $paymentdata = 'Check';
                 } else if ($paymethod == "directdeposit") {
                     $paymentdata = 'Direct Deposit';
+                }
+                else if ($paymethod == "zelleProxy") {
+                    $paymentdata = 'Zelle Proxy';
+                }
+                
+                else if ($paymethod == "sumup") {
+                    $paymentdata = 'SumUp';
                 }
                 else{
                     $paymentdata = '';
@@ -119,7 +128,8 @@
                    <td><?php echo $tpl['Donationarr'][$i]['YTD']; ?></td>
                    <td><?php echo $paymentdata; ?></td>
                    <td><?php echo $tpl['Donationarr'][$i]['paymentfor']; ?></td>
-                   <?php if ($admin != "" || $admin != null)  { ?>
+                   <!--<td>Parking</td>-->
+                   <?php if (!empty($admin))  { ?>
                        <td><?php echo $adminname; ?></td>
                         <?php
                           } else {
@@ -137,13 +147,9 @@
                    <?php
                      } ?>
 
-                       <!-- <span class="label label-<?php echo $tpl['Donationarr'][$i]['payment_status']; ?>">
-
-                            <?php echo $status_arr[$tpl['Donationarr'][$i]['payment_status']]; ?>
-                       </span> -->
                    </td>
-                   <td style="display:none;"><a class="btn btn-success btn-sm" href="<?php echo INSTALL_URL; ?>Member/adminedit/<?php echo $tpl['Donationarr'][$i]['id']; ?>" rev="<?php echo $v['ID']; ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                    <td style="display:none;"><a cat="1" class="btn btn-danger btn-sm icon-delete" rev="<?php echo $tpl['Donationarr'][$i]['id']; ?>" href="<?php echo INSTALL_URL; ?>Member/delete/<?php echo $tpl['Donationarr'][$i]['id']; ?>"><span class="glyphicon glyphicon-remove"></span></a></td>
+                   <td style="display:none;"><a class="btn btn-success btn-sm" href="<?php echo INSTALL_URL; ?>donationdata/edit/<?php echo $dataid; ?>" rev="<?php echo $dataid; ?>"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                    <td style="display:none;"><a cat="1" class="btn btn-danger btn-sm icon-delete" rev="<?php echo $dataid; ?>" href="<?php echo INSTALL_URL; ?>donationdata/delete/<?php echo $dataid; ?>"><span class="glyphicon glyphicon-remove"></span></a></td>
                     
                 </tr>
                 <?php

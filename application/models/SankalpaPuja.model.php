@@ -20,6 +20,8 @@ class SankalpaPujaModel extends AppModel {
         array('name' => 'NoofchildHaateKhori', 'type' => 'varchar', 'default' => ''),
         array('name' => 'child1name', 'type' => 'varchar', 'default' => ''),
         array('name' => 'child2name', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'child1age', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'child2age', 'type' => 'varchar', 'default' => ''),
         array('name' => 'fathername', 'type' => 'varchar', 'default' => ''),
         array('name' => 'mothername', 'type' => 'varchar', 'default' => ''),
         array('name' => 'offeringPujaSankalpa', 'type' => 'varchar', 'default' => ''),
@@ -59,6 +61,48 @@ class SankalpaPujaModel extends AppModel {
         array('name' => 'admin_name', 'type' => 'varchar', 'default' => '')
  
     ); 
+
+    public function ensureChildAgeColumns()
+    {
+        $columns = array(
+            'child1age' => 'VARCHAR(50) DEFAULT NULL',
+            'child2age' => 'VARCHAR(50) DEFAULT NULL'
+        );
+
+        foreach ($columns as $column => $definition) {
+            $safeColumn = addslashes($column);
+            $existing = $this->execute("SHOW COLUMNS FROM `" . $this->getTable() . "` LIKE '" . $safeColumn . "'");
+            if (empty($existing)) {
+                try {
+                    $this->execute("ALTER TABLE `" . $this->getTable() . "` ADD `" . $safeColumn . "` " . $definition);
+                } catch (Throwable $e) {
+                    error_log('PUJA SANKALPA COLUMN ENSURE SKIPPED | column=' . $safeColumn . ' | ' . $e->getMessage());
+                }
+            }
+        }
+    }
+
+    public function syncSchemaWithTableColumns()
+    {
+        $columns = $this->execute("SHOW COLUMNS FROM `" . $this->getTable() . "`");
+        if (empty($columns)) {
+            return false;
+        }
+
+        $existingColumns = array();
+        foreach ($columns as $column) {
+            if (!empty($column['Field'])) {
+                $existingColumns[$column['Field']] = true;
+            }
+        }
+
+        $this->schema = array_values(array_filter($this->schema, function ($field) use ($existingColumns) {
+            $name = trim($field['name'] ?? '');
+            return $name !== '' && !empty($existingColumns[$name]);
+        }));
+
+        return true;
+    }
     
      public function getAlldata($opts)
     {
@@ -70,7 +114,12 @@ class SankalpaPujaModel extends AppModel {
             $current_year = $current_year - 1;
             $Nextyear = $current_year + 1;
         }
-        $res = 'SELECT * FROM '.$this->getTable().' WHERE pay_date >= "'."$current_year-07-01".'" AND pay_date <= "'."$Nextyear-06-30".'"  ORDER BY id DESC';
+        $seasonStart = "$current_year-07-01";
+        $seasonEnd = "$Nextyear-06-30";
+        $res = 'SELECT ps.*,
+            (SELECT pr.sponsorLevel FROM pujaregistration pr WHERE pr.Member_id = ps.Member_id AND pr.pay_date >= "' . $seasonStart . '" AND pr.pay_date <= "' . $seasonEnd . '" ORDER BY pr.id DESC LIMIT 1) AS sponsorLevel,
+            (SELECT pr.greenFieldParkingDecision FROM pujaregistration pr WHERE pr.Member_id = ps.Member_id AND pr.pay_date >= "' . $seasonStart . '" AND pr.pay_date <= "' . $seasonEnd . '" ORDER BY pr.id DESC LIMIT 1) AS greenFieldParkingDecision
+            FROM '.$this->getTable().' ps WHERE ps.pay_date >= "' . $seasonStart . '" AND ps.pay_date <= "' . $seasonEnd . '"  ORDER BY ps.id DESC';
         $result = array();
         $arr = $this->execute($res);
         return $arr; 

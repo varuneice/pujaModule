@@ -252,6 +252,15 @@ $hasAdultChildData = !empty($tpl['pujadataarr']['co_register_adult_members'])
                                                     <option <?php echo ($tpl['pujadataarr']['status'] == $k) ? "selected='selected'" : ""; ?> value="<?php echo $k; ?>"><?php echo $v; ?></option>
                                                     <?php
                                                 }
+                                                if (($tpl['pujadataarr']['status'] ?? '') == "newdocument") {
+                                                    ?>
+                                                    <option value="newdocument" selected>New Document Required</option>
+                                                    <?php
+                                                } else {
+                                                    ?>
+                                                    <option value="newdocument">New Document Required</option>
+                                                    <?php
+                                                }
                                                 ?>
                                             </select>
                                             <?php } ?> 

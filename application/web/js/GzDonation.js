@@ -509,6 +509,7 @@
                 $("#directdeposite").hide();
                 $("#zelleProxyData").hide();
                 $("#MemberID1").show();
+                $("#MemberID").show();
                 $("#MemberID").prop('required', true);
                  $('#zelledatadiv').show();
                 resetZelleVerification();
@@ -789,14 +790,19 @@
     
             } 
             
-             else if (val == 'zelleProxy') {
+            else if (val == 'zelleProxy') {
                 $("#stripe_details").hide();
                 $("#others_details").hide();
                 $("#checkdata").hide();
                 $("#cashdata").hide();
                 $("#directdeposite").hide()
                 $("#Sumupdata").hide();
+                $("#MemberID1").show();
                 $("#zelleProxyData").show();
+                $("#MemberID").hide();
+                $("#zelle-action-btns").hide();
+                $("#zelle-manual-fields").hide();
+                $("#zelle-no-match").hide();
                 
                 $("#sumupid").prop('required', false);
                 $("#sumupprice").prop('required', false);
@@ -840,7 +846,6 @@
                 document.getElementById("error_code2").style.display = "none";
                 document.getElementById("error_codeimg").style.display = "none";
                 document.getElementById("checkPaymentData").style.display = "none";
-                document.getElementById("MemberID1").style.display = "none";
             }
             else {
                 $("#stripe_details").hide();

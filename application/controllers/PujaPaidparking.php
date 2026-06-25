@@ -346,6 +346,8 @@ class PujaPaidparking extends App {
                         $payui = 'Online Deposit';
                     } else if ($paymethod == "sumup") {
                         $payui = 'SumUp';
+                    } else if ($paymethod == "zelleProxy") {
+                        $payui = 'Zelle Proxy';
                     } else if ($paymethod == "stripe") {
                         $payui = 'Credit Card';
                     }

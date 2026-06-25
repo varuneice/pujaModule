@@ -229,9 +229,13 @@ input#yesMG {width: 10%;}
         <div class="auto-container">
             <div class="row clearfix">
                 <!--Title -->
-                 <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                    <img style="float:left;padding:20px" src="../1.svg" width="35%">
-					<img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
+                 <div style="display: flex;" class="title-column col-lg-6 col-md-12 col-sm-12">
+                    <div style="width: 21rem;">
+                        <img style="float:left;padding:20px ; width: 100%" src="../1.svg">
+                    </div>
+                    <div style="width: 15rem; margin-top: 1.9rem;">
+                        <img style="border-radius: 43px;float: left;padding: 0px;  width: 94%" src="../merchandise.jpg">
+                    </div>
                 </div>
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
@@ -420,6 +424,7 @@ $adult_registration_count = $_POST['adult_member_count'] ?? 0;
                             <option value="stripe">Credit card</option>
                             <option value="ComplimentaryRegistration">Complimentary Registration</option>
                            <option value="others">Zelle (Preferred)</option> 
+                            <option value="zelleProxy">Zelle Proxy</option>
                         </select>
                         <?php } ?> 
                         <?php if (!$this->controller->isAdmin() && !$this->controller->isEditor()) { ?>
@@ -662,6 +667,36 @@ $adult_registration_count = $_POST['adult_member_count'] ?? 0;
     </tbody>
 </table>
 
+<!-- for zelle proxy -->
+<table class="table table-bordered table-hover table-striped" style="display:none;margin-top: -42px;" id="zelleProxyData">
+    <thead>
+        <tr class="tr">
+            <th>Transaction Id</th>
+            <th>Transaction Date</th>
+            <th>Amount</th>
+            <th>Deposit Account</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="tr">
+            <td class="td"><input style="WIDTH: 100%;" type="text" id="proxyTrId"
+                    name="zelleProxyTid" class="form-control input-sm" value=""></td>
+            <td class="td"><input style="WIDTH: 100%;" type="date" id="proxyTrdate"
+                    name="proxydate" class="form-control input-sm" value=""></td>
+            <td class="td">
+                <input style="WIDTH: 100%;" type="number" id="proxyprice" name="proxyamount"
+                    class="form-control input-sm" value="">
+            </td>
+            <td class="td">
+                <select name="zelleProxyDepositAccount" class="choice">
+                    <option value="PujaAccount">Puja Account</option>
+                    <option value="RegularAccount">Regular Account</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
                                 
 <input type="hidden" name="stripeToken" id="stripeToken" value="" />
 <div id="stripe_secret_key_id" style="display: none"><?php echo $tpl['option_arr_values']['stripe_publish_key']; ?></div>
@@ -863,9 +898,9 @@ $adult_registration_count = $_POST['adult_member_count'] ?? 0;
                <div class="widget-content">
                     <div class="text">If you have any questions, please contact us</div>
                         <p style="padding-bottom:30px;"><span><i class="fa fa-envelope" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="mailto:registration@durgabari.org"> registration@durgabari.org</a></p>
-               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+17134948782"> <strong style="font-size:26px;"> +1 713-494-8782</strong> <br><span style="font-size:20px;color:#000;">Enakshi Lahiri</span></a></p>
-               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18322055665"> <strong style="font-size:26px;"> +1 832-205-5665</strong> <br><span style="font-size:20px;color:#000;">Amit Bhaduri</span></a></p>
-               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18326770860"> <strong style="font-size:26px;"> +1 832-677-0860</strong> <br><span style="font-size:20px;color:#000;">Subhas Das</span></a></p>
+               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+14134046740"> <strong style="font-size:26px;">413-404-6740</strong> <br><span style="font-size:20px;color:#000;">Sourima</span></a></p>
+               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18327234829"> <strong style="font-size:26px;">832-723-4829</strong> <br><span style="font-size:20px;color:#000;">Debashish</span></a></p>
+               <p><span><i class="fa fa-phone" aria-hidden="true"></i></span><a style="color:#000;text-decoration:none;" href="tel:+18322055665"> <strong style="font-size:26px;">832-205-5665</strong> <br><span style="font-size:20px;color:#000;">Amit</span></a></p>
                </div>
             </div>
                         

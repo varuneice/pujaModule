@@ -1,9 +1,9 @@
-﻿<head>
+<head>
     <title>Puja Food Coupons Request</title>
     <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
 
         function InvalidMsg(textbox) {
@@ -998,14 +998,34 @@
     </style>
 
 
-<section class="page-title" style="background-image:url(<?php echo INSTALL_URL; ?>12.jpg);">
+<section class="page-title" style="background-image:url(https://durgabari.org/HDBS_Puja_Payments/12.jpg);">
         <div class="auto-container">
             <div class="row clearfix">
                 <!--Title -->
-                <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                    <img style="float:left;padding:20px" src="../1.svg" width="35%">
-                    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
+                <!--<div class="title-column col-lg-6 col-md-12 col-sm-12">-->
+                <!--    <img style="float:left;padding:20px" src="../1.svg" width="35%">-->
+                <!--    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">-->
+                <!--</div>-->
+                
+                
+                <div style="display: flex;" class="title-column col-lg-6 col-md-12 col-sm-12">
+
+                <div style="width: 21rem;">
+                    <img style="float:left;padding:20px ; width: 100%" src="../1.svg">
                 </div>
+
+                <div style="width: 15rem; margin-top: 1.9rem;">
+                    <img style="border-radius: 43px;float: left;padding: 0px;  width: 94%" src="../merchandise.jpg">
+                </div>
+
+
+
+
+
+
+            </div>
+                
+                
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
                     <h1>Houston Durga Bari Society</h1>
@@ -1037,13 +1057,16 @@
             <div class="col-lg-8 col-md-12 col-sm-12" style="padding:0px;">
                 <div id="page-body"
                     style="border-left: 3px solid #ef260f;border-right: 3px solid #ef260f;border-bottom: 3px solid #ef260f; padding: 2rem;">
+                    <div id="otp-admin-bypass" style="display:none;"><?php echo ($this->controller->isAdmin() || $this->controller->isEditor()) ? '1' : '0'; ?></div>
+                    <div id="otp-session-verified" style="display:none"><?php
+                        $otpVerifiedMember = $_SESSION['otp_verified_member'] ?? '';
+                        if (is_array($otpVerifiedMember)) {
+                            $otpVerifiedMember = $otpVerifiedMember['member_id'] ?? '';
+                        }
+                        echo htmlspecialchars((string) $otpVerifiedMember, ENT_QUOTES);
+                    ?></div>
                     <form id="foodCoupon-frm-id" class="form-horizontal" method="post" action="" role="form">
                         <input type="hidden" name="create_FoodCouponRequest" value="1" />
-                        <div id="otp-admin-bypass" style="display:none;"><?php echo ($this->controller->isAdmin() || $this->controller->isEditor()) ? '1' : '0'; ?></div>
-                        <div id="otp-session-verified" style="display:none;"><?php
-                            $otpVerifiedMember = $_SESSION['otp_verified_member'] ?? '';
-                            echo htmlspecialchars(is_array($otpVerifiedMember) ? ($otpVerifiedMember['member_id'] ?? '') : $otpVerifiedMember, ENT_QUOTES, 'UTF-8');
-                        ?></div>
                         <fieldset class="asb">
 
                             <div class="row">
@@ -1058,12 +1081,17 @@
                                     </select>
                                     <div class="text_placeholders">Returning or New User *</div>
                                 </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12" id="otp-verified-banner" style="display:none;margin:12px 0;"></div>
 
                                 <div id="IDMembertd" class="col-lg-6 col-md-6 col-sm-6 disabledbutton">
                                     <input type="text" name="term" id="term" placeholder="search records here.... *"
                                         class="MIDtext3" tabindex="2" required>
                                     <div class="text_placeholders">Search by : First Name, Last Name, Zip, MID *
+                                    </div>
+                                </div>
+
+                                <div id="otp-verified-banner" class="col-lg-12 col-md-12 col-sm-12" style="display:none;margin-top:8px;">
+                                    <div style="background:#eafaf1;border:1px solid #b7e4c7;color:#1e8449;border-radius:5px;font-size:13px;font-weight:600;padding:8px 12px;margin-bottom:10px;">
+                                        Returning user verified and details auto-filled.
                                     </div>
                                 </div>
 
@@ -1080,7 +1108,7 @@
                                     <select required="" name="sessionCode" id="ddlCouponType" class="choice"
                                         aria-required="true" aria-invalid="false">
                                         <?php
-                                        foreach (($tpl['foodcoupon'] ?? []) as $value) {
+                                        foreach ($tpl['foodcoupon'] as $value) {
                                             ?>
                                             <option value="<?php echo $value['sessionCode']; ?>">
                                                 <span style="font-size: 10px;">
@@ -1137,6 +1165,13 @@
                                     <input required="" id="email" class="MIDtext2readonly" type="text"
                                         placeholder="name@company.com" value="" name="email" tabindex="11"
                                         pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+                                        
+                                        <div id="suggestions" style="border:1px solid #ccc; display:none; position:absolute; 
+                                             background:#fff; z-index:1000; font-size:20px; width:100%; max-height:150px; overflow-y:auto;">
+                                         </div>
+                                        
+                                        
+                                        
                                     <div class="text_placeholders">Email *</div>
                                 </div>
                                  <div class="col-lg-6 col-md-6 col-sm-6">
@@ -1155,7 +1190,7 @@
                             <div class="row" id="submitdatadiv">
                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                     <button id="reset-btn-id" class="go_cart_btn btn" autocomplete="off" value="Save"
-                                        name="Reset" tabindex="16" type="submit"><i
+                                        name="Reset" tabindex="16" type="button"><i
                                             class="fa fa-fw fa-save"></i>&nbsp;&nbsp;Reset</button>
                                 </div>
 
@@ -1166,8 +1201,8 @@
                                 </div>
 
                             </div>
+                        <?php require __DIR__ . '/../components/otp_modal.php'; ?>
                     </form>
-                    <?php require __DIR__ . '/../components/otp_modal.php'; ?>
                 </div>
 
             </div>
@@ -1224,7 +1259,7 @@
         $(function () {
             $("#term").autocomplete({
                 //source: "http://localhost/NewFoodCoupon/ajax-db-search.php",
-                source: '<?php echo INSTALL_URL; ?>ajax-db-search.php',
+                source: 'https://durgabari.org/HDBS_Puja_Payments/ajax-db-search.php',
                 select: function (event, ui) {
                     event.preventDefault();
                     var name = ui.item.value;
@@ -1254,24 +1289,28 @@
         ////Lookup.......................End..............................////
 
         function optionreq() {
+            var memberName = document.getElementById('MemberName');
+            var street = document.getElementById('Street');
+            var tele = document.getElementById('Tele1');
+            var paymentOption = document.getElementById('PaymentOption');
 
             if (GdSelect != null) {
-                document.getElementById('MemberName').required = true;
-                document.getElementById('Street').required = true;
-                document.getElementById('Tele1').required = true;
+                if (memberName) memberName.required = true;
+                if (street) street.required = true;
+                if (tele) tele.required = true;
                 document.getElementById('email').required = true;
-                document.getElementById('PaymentOption').required = true;
+                if (paymentOption) paymentOption.required = true;
                 document.getElementById('zip_code').required = true;
                 document.getElementById('state').required = true;
                 document.getElementById('city').required = true;
                 document.getElementsByClassName("form-control input-sm").required = true;
 
             } else {
-                document.getElementById('MemberName').required = false;
-                document.getElementById('Street').required = false;
-                document.getElementById('Tele1').required = true;
+                if (memberName) memberName.required = false;
+                if (street) street.required = false;
+                if (tele) tele.required = true;
                 document.getElementById('email').required = true;
-                document.getElementById('PaymentOption').required = false;
+                if (paymentOption) paymentOption.required = false;
                 document.getElementById('zip_code').required = false;
                 document.getElementById('state').required = false;
                 document.getElementById('city').required = false;
@@ -1289,87 +1328,34 @@
             $(this).val($(this).val().replace(/[^a-z0-9]/gi, ''));
         });
 
-        function fillFoodCouponReturningUserFromOtp(memberId) {
-            $('#otp-session-verified').text(memberId || '');
-            $('#registrationmember').val('member');
-            $('#IDMembertd').show().removeClass('disabledbutton');
-            $('#memberiddiv').show();
-            $('#termMember').val(memberId || '');
-            $('#term').val('Verified Member ' + (memberId || '')).prop('readonly', true).attr('autocomplete', 'off');
-            if (typeof getMemberRecordDetails === 'function') {
-                getMemberRecordDetails();
-            }
-            $('#otp-verified-banner').show().html('<div style="background:#eafaf1;border:1px solid #b7e4c7;color:#1e8449;border-radius:5px;font-size:13px;font-weight:600;padding:8px 12px;">Returning user verified and details auto-filled.</div>');
-        }
-
-        function openFoodCouponReturningUserOtp() {
-            if ($.trim($('#otp-admin-bypass').text() || '') === '1') {
-                return true;
-            }
-            if (typeof window.OtpMemberVerify === 'undefined') {
-                alert('OTP verification is not available. Please refresh and try again.');
-                return false;
-            }
-            window.OtpMemberVerify.open({
-                onVerified: function (memberId) {
-                    fillFoodCouponReturningUserFromOtp(memberId);
-                }
-            });
-            window.onOtpModalCancelled = function () {
-                $('#registrationmember').val('');
-            };
-            return true;
-        }
-
-        $(document).on('keydown focus paste input', '#term', function (event) {
-            if ($('#registrationmember').val() === 'member' && $.trim($('#otp-admin-bypass').text() || '') !== '1') {
-                event.preventDefault();
-                $(this).blur();
-                return false;
-            }
-        });
-
-        $(document).on('change', '#registrationmember', function () {
-            if ($(this).val() === 'member' && $.trim($('#otp-admin-bypass').text() || '') !== '1') {
-                setTimeout(function () {
-                    var verifiedMemberId = $.trim($('#otp-session-verified').text() || '');
-                    if (verifiedMemberId) {
-                        fillFoodCouponReturningUserFromOtp(verifiedMemberId);
-                    } else {
-                        openFoodCouponReturningUserOtp();
-                    }
-                }, 0);
-            }
-        });
-
         //validate phone no 
         function sponsoramount(elem) {
-            //
+            //debugger;
             const phonenumber = $("#phone").val();
             if (!!phonenumber) {
                 if (isNaN(phonenumber)) {
                     alert("Please Enter mobile Number");
-                    $("#payment_btn_id").addClass('disabled');
+                    $("#submit_btn_id").addClass('disabled');
                     //document.getElementById("totalamount").value = price; 
                 }
                 else if (phonenumber.length > 10) {
                     alert("Number should be 10 digits");
-                    $("#payment_btn_id").addClass('disabled');
+                    $("#submit_btn_id").addClass('disabled');
                 }
                 else if (phonenumber.length < 10) {
                     alert("Number should be 10 digits");
-                    $("#payment_btn_id").addClass('disabled');
+                    $("#submit_btn_id").addClass('disabled');
                 }
                 else if (phonenumber.length == 10) {
-                    $("#payment_btn_id").removeClass('disabled');
+                    $("#submit_btn_id").removeClass('disabled');
                 }
                 else {
-                    $("#payment_btn_id").removeClass('disabled');
+                    $("#submit_btn_id").removeClass('disabled');
                 }
             }
             else {
                 $("#phone").prop('required', true);
-                $("#payment_btn_id").removeClass('disabled');
+                $("#submit_btn_id").removeClass('disabled');
             }
         }
 
@@ -1593,6 +1579,83 @@
             $('#foodCoupon-frm-id')[0].reset();
         });
 
+        function openReturningUserOtpForFoodCoupon() {
+            if (typeof window.OtpMemberVerify === 'undefined') {
+                alert('OTP verification is not available. Please refresh and try again.');
+                return false;
+            }
+            window.OtpMemberVerify.open({
+                onVerified: function (memberId) {
+                    var verifiedMemberId = memberId || '';
+                    $('#otp-session-verified').text(verifiedMemberId);
+                    $('#termMember').val(verifiedMemberId);
+                    $('#term').val('Verified Member ' + verifiedMemberId).prop('readonly', true).attr('autocomplete', 'off');
+                    $('#IDMembertd').hide().addClass('disabledbutton');
+                    $('#otp-verified-banner').show();
+                    getMemberRecordDetails();
+                }
+            });
+            window.onOtpModalCancelled = function () {
+                $('#registrationmember').val('');
+                $('#otp-verified-banner').hide();
+                $('#IDMembertd').show().addClass('disabledbutton');
+                $('#term').val('').prop('readonly', false);
+                $('#termMember').val('');
+            };
+            return true;
+        }
+
+        function handleFoodCouponReturningUserOtp() {
+            var regmember = $.trim($('#registrationmember').val() || '');
+            var otpAdminBypass = $.trim($('#otp-admin-bypass').text() || '') === '1';
+
+            if (regmember === 'nonmember') {
+                $('#otp-verified-banner').hide();
+                $('#IDMembertd').hide().addClass('disabledbutton');
+                $('#memberiddiv').hide();
+                $('#termMember').val('');
+                $('#term').prop('required', false).prop('readonly', false);
+                $('#demmember').prop('required', false);
+                return;
+            }
+
+            if (regmember === '') {
+                $('#otp-verified-banner').hide();
+                $('#IDMembertd').show().addClass('disabledbutton');
+                $('#memberiddiv').show();
+                $('#termMember').val('');
+                $('#term').prop('required', false).prop('readonly', false);
+                $('#demmember').prop('required', false);
+                return;
+            }
+
+            if (otpAdminBypass) {
+                $('#otp-verified-banner').hide();
+                $('#IDMembertd').show().removeClass('disabledbutton');
+                $('#term').prop('readonly', false);
+                return;
+            }
+
+            var verifiedMemberId = $.trim($('#otp-session-verified').text() || '');
+            if (verifiedMemberId) {
+                $('#termMember').val(verifiedMemberId);
+                $('#term').val('Verified Member ' + verifiedMemberId).prop('readonly', true).attr('autocomplete', 'off');
+                $('#IDMembertd').hide().addClass('disabledbutton');
+                $('#otp-verified-banner').show();
+                getMemberRecordDetails();
+            } else {
+                $('#otp-verified-banner').hide();
+                $('#IDMembertd').hide().addClass('disabledbutton');
+                $('#termMember').val('');
+                $('#term').prop('readonly', true).attr('autocomplete', 'off');
+                openReturningUserOtpForFoodCoupon();
+            }
+        }
+
+        $(document).on('change', '#registrationmember', function () {
+            handleFoodCouponReturningUserOtp();
+        });
+
         const hiddenField = document.getElementById('selectedSessionName');
         const dropdown = document.getElementById('ddlCouponType');
         const form = document.getElementById('foodCoupon-frm-id');
@@ -1605,4 +1668,58 @@
         form.addEventListener('submit', function () {
             updateHiddenField();
         });
+        
+        
+        
+        // 29 sep
+        
+        const emailInput = document.getElementById("email");
+const suggestionBox = document.getElementById("suggestions");
+
+const domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
+
+// Show suggestions
+emailInput.addEventListener("input", function () {
+  const value = this.value;
+  const atPos = value.indexOf("@");
+
+  if (atPos > -1) {
+    const prefix = value.slice(0, atPos + 1);
+    const query = value.slice(atPos + 1).toLowerCase();
+
+    const filtered = domains.filter(d => d.startsWith(query));
+
+    if (filtered.length > 0) {
+      suggestionBox.innerHTML = filtered
+        .map(d => `<div class="item" 
+                      style="padding:8px;cursor:pointer;">${prefix}${d}</div>`)
+        .join("");
+      suggestionBox.style.display = "block";
+    } else {
+      suggestionBox.style.display = "none";
+    }
+  } else {
+    suggestionBox.style.display = "none";
+  }
+});
+
+// ✅ Click suggestion (works on iPad tap too)
+suggestionBox.addEventListener("mousedown", function (e) {
+  if (e.target.classList.contains("item")) {
+    e.preventDefault(); // stop input blur first
+    emailInput.value = e.target.textContent;
+    suggestionBox.style.display = "none";
+  }
+});
+
+// ✅ Blur should hide suggestions (only after a short delay)
+emailInput.addEventListener("blur", () => {
+  setTimeout(() => (suggestionBox.style.display = "none"), 200);
+});
+
+
+        
+        
+        
+        
     </script>

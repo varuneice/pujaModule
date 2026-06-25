@@ -90,6 +90,7 @@ input#yesMG {width: 10%;}
 .modal-content { width: 80% !important; margin: 160px auto auto auto !important;}
 .input-sm{ font-size:16px !important; }
 #payment_btn_id { padding: 10px; font-size: 22px; border-radius: 10px; width: 100%; background-color: #000; color: #fff; margin-top: 30px; font-weight: 600; }
+#freeDiamondBtn { padding: 10px; font-size: 22px; border-radius: 10px; width: 100%; background-color: #000; color: #fff; margin-top: 30px; font-weight: 600; }
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
     .col-md-6.phone { padding-top: 20px;}
@@ -135,10 +136,12 @@ input#memphone2fam { width: 416px;}
         <div class="auto-container">
             <div class="row clearfix">
                 <!--Title -->
-                <div class="title-column col-lg-6 col-md-12 col-sm-12">
-                    <img style="float:left;padding:20px" src="../1.svg" width="35%">
-                    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
-                </div>
+                <?php
+                if (!defined("ROOT_PATH")) {
+                    define("ROOT_PATH", dirname(__FILE__) . '/');
+                }
+                include_once ROOT_PATH . 'application/templates/title_images.php';
+                ?>
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
                     <h1>Houston Durga Bari Society</h1>
@@ -151,7 +154,7 @@ input#memphone2fam { width: 416px;}
                     </h3>
                     <h3>Payment for Puja Food Coupons</h3>
                     <ul class="bread-crumb clearfix">
-                        <li><a style="text-decoration:none;color:#fff;" href="#">Home</a></li>
+                        <li><a style="text-decoration:none;color:#fff;" href="<?php echo INSTALL_URL; ?>">Home</a></li>
                         <li class="active">Puja Food Coupon</li>
                     </ul>
                 </div>
@@ -196,9 +199,27 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                 </div>
 
     </div>
-                                   
+    
+    <div style="margin-top: 2rem;" class="col-lg-12 col-md-12 col-sm-12" id="membercategorydiv">
+        <select required="" name="sessionCode" id="ddlCouponType" class="choice" aria-required="true"
+            aria-invalid="false" onchange="updateHiddenField(); setCouponOptions();">
+            <option value="" disabled selected>Please select</option>
+            <?php
+            foreach ($tpl['foodcoupon'] as $value) {
+                ?>
+                <option value="<?php echo $value['sessionCode']; ?>">
+                    <span style="font-size: 10px;">
+                        <?php echo $value['sessionName']; ?>
+                    </span>
+                </option>
+                <?php
+            } ?>
+        </select>
+        <input type="hidden" name="sessionName" id="selectedSessionName" value="">
+        <div class="text_placeholders">Coupon Type</div>
+    </div>
        
-            
+             
                 <div class="col-lg-6 col-md-6 col-sm-6">
                    <input id="first_name" class="MIDtext2" type="text" name="F_Name" size="25" value="" title="<?php echo __('First Name'); ?>" placeholder="First Name *" required="">
                     <div class="text_placeholders">First Name *</div>
@@ -232,6 +253,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                     <div class="text_placeholders">Email ID *</div>
                 </div>
 
+                <div id="couponBox">
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <h2 style="font-size: 24px; color: #03a9f4;">Coupons For : </h2>
                 </div>
@@ -428,6 +450,30 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
 
 </div>
 
+                </div>
+
+                     <div style="display: none;" id="foodCouponDiv" class="row col-lg-12 col-md-12 col-sm-12">
+                        <div class="col-md-6">
+                            <input class="number" id="childCoupondata" style="width:100%;" type="number" value=""
+                                min="0" max="3" name="childCouponInaugration" placeholder="Enter No. of Child Coupon"
+                                title="Child Coupon" onchange="calculateTotalAmount()" />
+                            <div class="text_placeholders">Child Dinner Coupon</div>
+                            <div id="childPlaceholder" class="text_placeholders"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input class="number" id="adultCoupondata" style="width:100%;" type="number" value=""
+                                min="0" max="4" name="adultCouponInaugration" placeholder="Enter No. of Adult Coupon"
+                                title="Adult Coupon" onchange="calculateTotalAmount()" />
+                            <div class="text_placeholders">Adult Dinner Coupon</div>
+                            <div id="adultPlaceholder" class="text_placeholders"></div>
+                        </div>
+
+                        <input type="hidden" id="foodCouponTotalPrice" name="foodCouponTotalPrice" value="">
+                        <input type="hidden" id="childCouponPriceTotal" name="childCouponPriceTotal" value="">
+                        <input type="hidden" id="adultCouponPriceTotal" name="adultCouponPriceTotal" value="">
+                    </div>
+
  <div class="col-lg-12 col-md-12 col-sm-12" style="margin-bottom: 30px;">
     <input data-rule-required="true" id="totalcost" class="MIDtext2readonly" type="number" name="amount" size="25" value="" title="Amount" placeholder="$ Amount *" readonly>
     <div class="text_placeholders">Requested Amount to Pay ($) *</div>
@@ -444,6 +490,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                                                 <option value="stripe">Credit card</option>
                                                 <option value="others">Zelle (Preferred)</option>
                                                 <option value="sumup">Sumup</option>
+                                                <option value="zelleProxy">Zelle Proxy</option>
                                             </select>
                                             <div class="text_placeholders">Payment Method *</div>
                                     </div>
@@ -643,6 +690,36 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
     </tbody>
 </table>
 
+<table class="table table-bordered table-hover table-striped"
+    style="display:none;margin-top: -42px;" id="zelleProxyData">
+    <thead>
+        <tr class="tr">
+            <th>Transaction Id</th>
+            <th>Transaction Date</th>
+            <th>Amount</th>
+            <th>Deposit Account</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="tr">
+            <td class="td"><input style="WIDTH: 100%;" type="text" id="proxyTrId"
+                    name="zelleProxyTid" class="form-control input-sm" value=""></td>
+            <td class="td"><input style="WIDTH: 100%;" type="date" id="proxyTrdate" name="proxydate"
+                    class="form-control input-sm" value=""></td>
+            <td class="td">
+                <input style="WIDTH: 100%;" type="number" id="proxyprice" name="proxyamount"
+                    class="form-control input-sm" value="">
+            </td>
+            <td class="td">
+                <select name="zelleProxyDepositAccount" class="choice">
+                    <option value="PujaAccount">Puja Account</option>
+                    <option value="RegularAccount">Regular Account</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 <!-- End -->  
 
  <tr style="display:none;">
@@ -658,6 +735,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                         <?php echo __('save'); ?>
                     </button> -->
                     <button id="payment_btn_id" class="btn btn-primary" autocomplete="off" value="Save" name="Payment" tabindex="17" type="submit"><i class="fa fa-fw fa-save"></i>&nbsp;&nbsp;Make Payment</button>
+                    <button style="display: none;" id="freeDiamondBtn" class="btn btn-primary" autocomplete="off" value="Savefree" name="freeDiamondBtn" tabindex="17" type="submit"><i class="fa fa-fw fa-save"></i>&nbsp;&nbsp; Submit</button>
                 </div> 
 
                  <input type="hidden" name="stripeToken" id="stripeToken" value="" />
@@ -745,6 +823,212 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
             document.getElementById('termdiv').style.display = "none";
            
              
+        }
+    }
+
+    let ytd = 0;
+    let level = "";
+    let couponPrice = 0;
+    let inaugrationCoupon = false;
+    let pujaRegistration = false;
+    const hiddenField = document.getElementById('selectedSessionName');
+    const dropdown = document.getElementById('ddlCouponType');
+    const form = document.getElementById('edit_Pujafoodcoupondata');
+    const couponBox = document.getElementById("couponBox");
+    const totalcost = document.getElementById("totalcost");
+    const inaurgationCouponBox = document.getElementById("foodCouponDiv");
+    const childCouponInput = document.getElementById("childCoupondata");
+    const adultCouponInput = document.getElementById("adultCoupondata");
+    const foodCouponTotalPrice = document.getElementById("foodCouponTotalPrice");
+    const childCouponPriceTotal = document.getElementById("childCouponPriceTotal");
+    const adultCouponPriceTotal = document.getElementById("adultCouponPriceTotal");
+    const adultPlaceholder = document.getElementById("adultPlaceholder");
+    const childPlaceholder = document.getElementById("childPlaceholder");
+    const payment_btn_id = document.getElementById("payment_btn_id");
+    const freeDiamondBtn = document.getElementById("freeDiamondBtn");
+    const paymentdropdown = document.getElementById("paymentdropdown");
+
+    function updateHiddenField() {
+        if (!dropdown || !hiddenField || !dropdown.options.length) {
+            return;
+        }
+        hiddenField.value = dropdown.options[dropdown.selectedIndex].text;
+    }
+
+    if (form) {
+        form.addEventListener('submit', function () {
+            updateHiddenField();
+        });
+    }
+
+    if (dropdown) {
+        dropdown.addEventListener('change', function () {
+            inaugrationCoupon = !!(this.value && this.value.includes('ID'));
+            setCouponOptions();
+        });
+    }
+
+    function setCouponOptions() {
+        if (!couponBox || !inaurgationCouponBox) {
+            return;
+        }
+
+        if (inaugrationCoupon) {
+            $('input[type="checkbox"]').iCheck('uncheck');
+            couponBox.style.display = "none";
+            totalcost.value = 0;
+            inaurgationCouponBox.style.display = "block";
+
+            if (ytd < 5000 && level != "Diamond") {
+                couponPriceSet();
+            } else if (ytd > 4999 || level == "Diamond") {
+                couponPrice = 0;
+                freeCouponDiamond();
+            }
+        } else {
+            resetInuagrationCoupon();
+            inaurgationCouponBox.style.display = "none";
+            couponBox.style.display = "block";
+            findTotal();
+            hideAllOPtion();
+        }
+    }
+
+    function couponPriceSet() {
+        const currentDate = new Date();
+        const targetDate = new Date(currentDate.getFullYear(), 8, 21);
+
+        if (pujaRegistration === true) {
+            if (currentDate <= targetDate) {
+                couponPrice = 10;
+                if (adultPlaceholder) adultPlaceholder.innerText = "Adult Registered Coupon Price is $10";
+                if (childPlaceholder) childPlaceholder.innerText = "Child Registered Coupon Price is $10";
+            } else {
+                couponPrice = 15;
+                if (adultPlaceholder) adultPlaceholder.innerText = "Adult Registered(Late) Coupon Price is $15";
+                if (childPlaceholder) childPlaceholder.innerText = "Child Registered(Late) Coupon Price is $15";
+            }
+        } else {
+            couponPrice = 20;
+            if (adultPlaceholder) adultPlaceholder.innerText = "Adult unregistered Coupon Price is $20";
+            if (childPlaceholder) childPlaceholder.innerText = "Child unregistered Coupon Price is $20";
+        }
+    }
+
+    function calculateTotalAmount() {
+        let childQty = parseInt(childCouponInput && childCouponInput.value ? childCouponInput.value : 0) || 0;
+        let adultQty = parseInt(adultCouponInput && adultCouponInput.value ? adultCouponInput.value : 0) || 0;
+
+        if (childQty > 3) {
+            alert("Max 3 child coupons allowed");
+            childQty = 0;
+            if (childCouponInput) childCouponInput.value = 0;
+        }
+
+        if (adultQty > 4) {
+            alert("Max 4 adult coupons allowed");
+            adultQty = 0;
+            if (adultCouponInput) adultCouponInput.value = 0;
+        }
+
+        const childTotal = childQty * couponPrice;
+        const adultTotal = adultQty * couponPrice;
+        const total = childTotal + adultTotal;
+
+        if (childCouponPriceTotal) childCouponPriceTotal.value = childTotal;
+        if (adultCouponPriceTotal) adultCouponPriceTotal.value = adultTotal;
+        if (foodCouponTotalPrice) foodCouponTotalPrice.value = total;
+        if (totalcost) totalcost.value = total;
+    }
+
+    function resetInuagrationCoupon() {
+        if (childCouponPriceTotal) childCouponPriceTotal.value = 0;
+        if (adultCouponPriceTotal) adultCouponPriceTotal.value = 0;
+        if (foodCouponTotalPrice) foodCouponTotalPrice.value = 0;
+        if (childCouponInput) childCouponInput.value = 0;
+        if (adultCouponInput) adultCouponInput.value = 0;
+
+        if (payment_btn_id) payment_btn_id.style.display = "block";
+        if (totalcost) totalcost.style.display = "block";
+        if (paymentdropdown) paymentdropdown.style.display = "block";
+        if (freeDiamondBtn) freeDiamondBtn.style.display = "none";
+        var paymentOption = document.getElementById('PaymentOption');
+        if (paymentOption) paymentOption.setAttribute('required', 'required');
+    }
+
+    function freeCouponDiamond() {
+        if (payment_btn_id) payment_btn_id.style.display = "none";
+        if (totalcost) totalcost.style.display = "none";
+        if (paymentdropdown) paymentdropdown.style.display = "none";
+        if (freeDiamondBtn) freeDiamondBtn.style.display = "block";
+        var paymentOption = document.getElementById('PaymentOption');
+        if (paymentOption) paymentOption.removeAttribute('required');
+    }
+
+    function checkPujaRegistration(memberid) {
+        let url2 = $("#container-abc-url-id").text();
+        $.ajax({
+            type: "POST",
+            data: {
+                memberid: memberid
+            },
+            url: url2 + "load.php?controller=PujaOnlinePayments&action=checkPujaRegitration2",
+            success: function (res) {
+                pujaRegistration = false;
+                const all3Puja = $(res).filter("input#all3Puja")[0]?.value || "";
+                const durgaPuja = $(res).filter("input#durgaPuja")[0]?.value || "";
+
+                if (all3Puja === "All 3 Pujas" || durgaPuja === "Durga Puja") {
+                    pujaRegistration = true;
+                }
+                setCouponOptions();
+            }
+        });
+    }
+
+    function onChnageOfmemberAndUserType() {
+        hideAllOPtion();
+    }
+
+    function hideAllOPtion() {
+        if (!dropdown) {
+            return;
+        }
+        var selectedIndex = dropdown.selectedIndex;
+        if (selectedIndex === 0) {
+            if (couponBox) {
+                couponBox.style.display = "none";
+            }
+            if (inaurgationCouponBox) {
+                inaurgationCouponBox.style.display = "none";
+            }
+        }
+    }
+
+    hideAllOPtion();
+
+    function checkProjectedSponsarLevel() {
+        var url2 = $("#container-abc-url-id").text();
+        var data = $("#termMember").val();
+        var term = $("#term").val();
+        if (term != "") {
+            if (term.trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        memberid: data
+                    },
+                    url: url2 + "load.php?controller=Pujaregistration&action=projectedSponsarLevel",
+                    success: function (res) {
+                        level = "";
+                        const levelElement = $(res).filter("input#sponsorLevel");
+                        if (levelElement.length) {
+                            level = levelElement[0].value;
+                        }
+                        setCouponOptions();
+                    }
+                });
+            }
         }
     }
 
@@ -846,14 +1130,24 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                    document.getElementById("city").value =  city;
 
 
-                   let zipcode = "";
-                    const zipcodeElement = $(res).filter("input#zip_code");
-                   if(zipcodeElement.length){
-                    zipcode = zipcodeElement[0].value; 
-                   }
-                   document.getElementById("zip").value = zipcode;
-     
-                }
+                    let zipcode = "";
+                     const zipcodeElement = $(res).filter("input#zip_code");
+                    if(zipcodeElement.length){
+                     zipcode = zipcodeElement[0].value; 
+                    }
+                    document.getElementById("zip").value = zipcode;
+
+                    const ytdElement = $(res).filter("input#ytd");
+                    if (ytdElement.length) {
+                        const rawValue = ytdElement[0].value;
+                        const numeric = rawValue && !isNaN(rawValue) ? parseInt(rawValue) : 0;
+                        ytd = numeric;
+                    }
+
+                    checkProjectedSponsarLevel();
+                    checkPujaRegistration(data);
+      
+                 }
             
             });
         } else {

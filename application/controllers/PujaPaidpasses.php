@@ -62,6 +62,39 @@ function getpujapricedata()
       }
     }
 
+    function getparentprice()
+    {
+        $this->setIsAjax(true);
+        GzObject::loadFiles('Model', array('pujaregistrationprice', 'pujaRegistrationDate'));
+        $pujaregistrationpriceModel = new pujaregistrationpriceModel();
+        try { $pujaregistrationpriceModel->ensureCurrentRegistrationRates(); } catch (Throwable $e) {}
+        $pujaRegistrationDateModel = new pujaRegistrationDateModel();
+
+        $pujaname = $_POST['pyjaname'] ?? '';
+        $pricefor = $_POST['paymentfor'] ?? '';
+        $pricetype = $_POST['pricetype'] ?? '';
+        $row = $pujaregistrationpriceModel->getRegistrationPriceRow($pujaname, $pricefor, $pricetype);
+
+        if (!empty($row['id'])) {
+            $parentBase = (float) ($row['parentregisration'] ?? 0);
+            $lateFee = 0;
+            $puaregistrationDate = $pujaRegistrationDateModel->getAll();
+            $latefeedate = $puaregistrationDate[0]['registrationDate'] ?? '';
+
+            date_default_timezone_set("America/Chicago");
+            $today = date("Y-m-d");
+            if ($latefeedate != '' && $today > $latefeedate) {
+                $lateFeeRow = $pujaregistrationpriceModel->getRegistrationPriceRow($pujaname, $pricefor, 'individual');
+                $lateFee = (float) ($lateFeeRow['latefee'] ?? 0);
+            }
+
+            $parentTotal = $parentBase + $lateFee;
+            echo "<input id='parentprice' value='" . htmlspecialchars($parentTotal, ENT_QUOTES) . "'/> ";
+            echo "<input id='parentbaseprice' value='" . htmlspecialchars($parentBase, ENT_QUOTES) . "'/> ";
+            echo "<input id='parentlatefee' value='" . htmlspecialchars($lateFee, ENT_QUOTES) . "'/> ";
+        }
+    }
+
       function PujaPaidpasses() {
     // action method — __construct() handles data loading
   }
@@ -166,6 +199,20 @@ function getpujapricedata()
         $_POST['outoftowner'] = isset($_POST['outoftowner']) && is_numeric($_POST['outoftowner']) ? (int)$_POST['outoftowner'] : 0;
         $_POST['member_veggie'] = isset($_POST['member_veggie']) && is_numeric($_POST['member_veggie']) ? (int)$_POST['member_veggie'] : 0;
         $_POST['spouse_veggie'] = isset($_POST['spouse_veggie']) && is_numeric($_POST['spouse_veggie']) ? (int)$_POST['spouse_veggie'] : 0;
+        $_POST['parent1_veggie'] = isset($_POST['parent1_veggie']) && is_numeric($_POST['parent1_veggie']) ? (int)$_POST['parent1_veggie'] : 0;
+        $_POST['parent2_veggie'] = isset($_POST['parent2_veggie']) && is_numeric($_POST['parent2_veggie']) ? (int)$_POST['parent2_veggie'] : 0;
+        $_POST['no_of_parent'] = isset($_POST['no_of_parent']) && in_array((string) $_POST['no_of_parent'], array('1', '2'), true) ? (string) $_POST['no_of_parent'] : '';
+        if ($_POST['no_of_parent'] === '') {
+            $_POST['parent1_fname'] = '';
+            $_POST['parent1_lname'] = '';
+            $_POST['parent2_fname'] = '';
+            $_POST['parent2_lname'] = '';
+            $_POST['extraparentregistration'] = '';
+        } elseif ($_POST['no_of_parent'] === '1') {
+            $_POST['parent2_fname'] = '';
+            $_POST['parent2_lname'] = '';
+            $_POST['parent2_veggie'] = 0;
+        }
         $_POST['Age1'] = isset($_POST['Age1']) && is_numeric($_POST['Age1']) ? (int)$_POST['Age1'] : 0;
         $_POST['Age2'] = isset($_POST['Age2']) && is_numeric($_POST['Age2']) ? (int)$_POST['Age2'] : 0;
         $_POST['Age3'] = isset($_POST['Age3']) && is_numeric($_POST['Age3']) ? (int)$_POST['Age3'] : 0;
@@ -321,6 +368,20 @@ function getpujapricedata()
         $_POST['outoftowner'] = isset($_POST['outoftowner']) && is_numeric($_POST['outoftowner']) ? (int)$_POST['outoftowner'] : 0;
         $_POST['member_veggie'] = isset($_POST['member_veggie']) && is_numeric($_POST['member_veggie']) ? (int)$_POST['member_veggie'] : 0;
         $_POST['spouse_veggie'] = isset($_POST['spouse_veggie']) && is_numeric($_POST['spouse_veggie']) ? (int)$_POST['spouse_veggie'] : 0;
+        $_POST['parent1_veggie'] = isset($_POST['parent1_veggie']) && is_numeric($_POST['parent1_veggie']) ? (int)$_POST['parent1_veggie'] : 0;
+        $_POST['parent2_veggie'] = isset($_POST['parent2_veggie']) && is_numeric($_POST['parent2_veggie']) ? (int)$_POST['parent2_veggie'] : 0;
+        $_POST['no_of_parent'] = isset($_POST['no_of_parent']) && in_array((string) $_POST['no_of_parent'], array('1', '2'), true) ? (string) $_POST['no_of_parent'] : '';
+        if ($_POST['no_of_parent'] === '') {
+            $_POST['parent1_fname'] = '';
+            $_POST['parent1_lname'] = '';
+            $_POST['parent2_fname'] = '';
+            $_POST['parent2_lname'] = '';
+            $_POST['extraparentregistration'] = '';
+        } elseif ($_POST['no_of_parent'] === '1') {
+            $_POST['parent2_fname'] = '';
+            $_POST['parent2_lname'] = '';
+            $_POST['parent2_veggie'] = 0;
+        }
         $_POST['Age1'] = isset($_POST['Age1']) && is_numeric($_POST['Age1']) ? (int)$_POST['Age1'] : 0;
         $_POST['Age2'] = isset($_POST['Age2']) && is_numeric($_POST['Age2']) ? (int)$_POST['Age2'] : 0;
         $_POST['Age3'] = isset($_POST['Age3']) && is_numeric($_POST['Age3']) ? (int)$_POST['Age3'] : 0;

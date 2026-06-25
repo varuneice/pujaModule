@@ -58,6 +58,8 @@
             <th><?php echo __('Total Count'); ?></th> 
             <th><?php echo __('Payment Method'); ?></th>
             <th><?php echo __('Processed By'); ?></th>
+            <th><?php echo __('Projected Sponsorship Level'); ?></th>
+            <th><?php echo __('Parking'); ?></th>
             <th><?php echo __('Status'); ?></th>  
             <th class="icon-th"></th>
             <th class="icon-th"></th>
@@ -199,11 +201,13 @@
               <?php
                           } else {
                               ?>
-              <td><?php echo "User"; ?></td>
-              <?php
-                      } ?>
-              <td>
-                   <?php if ($statusactive == 'pending')  { ?>
+               <td><?php echo "User"; ?></td>
+               <?php
+                       } ?>
+               <td><?php echo $tpl['arr'][$i]['sponsorLevel'] ?? ''; ?></td>
+               <td><?php echo $tpl['arr'][$i]['greenFieldParkingDecision'] ?? ''; ?></td>
+               <td>
+                    <?php if ($statusactive == 'pending')  { ?>
                   <span class="label label-<?php echo $tpl['arr'][$i]['status']; ?>">
                        <?php echo $status_arr[$tpl['arr'][$i]['status']]; ?>
                   </span>
@@ -212,10 +216,13 @@
                   <span class="label" style="background-color:orange;font-size: 15px;color: #fff;"><?php echo $tpl['arr'][$i]['status']; ?></span> 
               
 
-                  <?php } else if ($statusactive == 'confirmed')  { ?>
-                  <span class="label label-<?php echo $tpl['arr'][$i]['status']; ?>">
-                       <?php echo $status_arr[$tpl['arr'][$i]['status']]; ?>
-                  </span>
+                   <?php } else if ($statusactive == 'confirmed')  { ?>
+                   <span class="label label-<?php echo $tpl['arr'][$i]['status']; ?>">
+                       <?php echo $status_arr[$tpl['arr'][$i]['status']] ?? $tpl['arr'][$i]['status']; ?>
+                   </span>
+                   <?php }
+                  else if ($statusactive == "newdocument")  { ?>
+                    <span class="label" style="background-color:orange;font-size: 15px;color: #fff;">New Document Required</span>
                   <?php }
                   else if ($statusactive == '' || $statusactive == null)  { ?>
                     <span style="background-color:red;font-size: 14px;color: #fff;" class="label label-<?php echo $tpl['arr'][$i]['status']; ?>">
@@ -225,7 +232,7 @@
                   
                    else{ ?> 
                   <span  style="background-color:red;font-size: 14px;color: #fff;"class="label label-<?php echo $tpl['arr'][$i]['status']; ?>">
-                       <?php echo $status_arr[$tpl['arr'][$i]['status']]; ?>
+                       <?php echo $status_arr[$tpl['arr'][$i]['status']] ?? $tpl['arr'][$i]['status']; ?>
                   </span>
                   <?php } ?> 
               </td>

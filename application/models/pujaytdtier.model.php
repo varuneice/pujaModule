@@ -56,7 +56,7 @@ class pujaytdtierModel extends AppModel {
             array('Silver', 750, 999, 3),
             array('Gold', 1000, 1499, 4),
             array('Platinum', 1500, 2199, 5),
-            array('Emerald', 2200, 4999, 6),
+            array('Emerald', 2200, 4559, 6),
             array('Diamond', 5000, null, 7)
         );
 

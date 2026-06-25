@@ -1614,9 +1614,12 @@ class PujaCart extends App {
                     $error = '';
                     $success = '';
 
-                    Stripe::setApiKey1($this->tpl["option_arr_values"]["stripe_api_key"] ?? '');
-
                     try {
+                        $stripeApiKey = $this->getPujaCartStripeApiKey();
+                        if ($stripeApiKey === '') {
+                            throw new Exception("Stripe API key is not configured.");
+                        }
+                        Stripe::setApiKey($stripeApiKey);
                         if (!isset($_POST['stripeToken'])) {
                             throw new Exception("The Stripe Token was not generated correctly");
                         }
@@ -1806,7 +1809,8 @@ class PujaCart extends App {
 
                             $_SESSION['status'] = '<strong>' . __('declined_card') . '</strong>';
                         }
-                    } catch (Exception $ex) {
+                    } catch (Throwable $ex) {
+                        $this->logPujaCartError('stripe payment ERROR | ' . $ex->getMessage());
                         $_SESSION['status'] = $ex->getMessage();
                     }
                     
@@ -1836,6 +1840,41 @@ class PujaCart extends App {
   private function logPujaCartError($message) {
       $logFile = __DIR__ . '/../../pujaregistrationlog.log';
       file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . '] [PujaCart] ' . $message . PHP_EOL, FILE_APPEND);
+  }
+
+  private function getPujaCartStripeApiKey() {
+      $stripeApiKey = trim((string)($this->tpl["option_arr_values"]["stripe_api_key"] ?? ''));
+      if ($stripeApiKey !== '') {
+          return $stripeApiKey;
+      }
+
+      $stripeApiKey = trim((string)($this->option_arr["stripe_api_key"] ?? ''));
+      if ($stripeApiKey !== '') {
+          return $stripeApiKey;
+      }
+
+      try {
+          GzObject::loadFiles('Model', 'Option');
+          $OptionModel = new OptionModel();
+          $options = $OptionModel->getAllPairValues();
+          $stripeApiKey = trim((string)($options["stripe_api_key"] ?? ''));
+          if ($stripeApiKey !== '') {
+              $this->option_arr = $options;
+              $this->tpl['option_arr_values'] = $options;
+              return $stripeApiKey;
+          }
+      } catch (Throwable $e) {
+          $this->logPujaCartError('stripe option reload ERROR | ' . $e->getMessage());
+      }
+
+      foreach (array('STRIPE_API_KEY', 'STRIPE_SECRET_KEY') as $envKey) {
+          $stripeApiKey = trim((string)getenv($envKey));
+          if ($stripeApiKey !== '') {
+              return $stripeApiKey;
+          }
+      }
+
+      return '';
   }
 
   private function validateRegistrationDocumentUpload($file)
@@ -4182,9 +4221,12 @@ class PujaCart extends App {
                     $error = '';
                     $success = '';
 
-                    Stripe::setApiKey1($this->tpl["option_arr_values"]["stripe_api_key"] ?? '');
-
                     try {
+                        $stripeApiKey = $this->getPujaCartStripeApiKey();
+                        if ($stripeApiKey === '') {
+                            throw new Exception("Stripe API key is not configured.");
+                        }
+                        Stripe::setApiKey($stripeApiKey);
                         if (!isset($_POST['stripeToken'])) {
                             throw new Exception("The Stripe Token was not generated correctly");
                         }
@@ -4435,7 +4477,8 @@ class PujaCart extends App {
 
                             $_SESSION['status'] = '<strong>' . __('declined_card') . '</strong>';
                         }
-                    } catch (Exception $ex) {
+                    } catch (Throwable $ex) {
+                        $this->logPujaCartError('stripe payment ERROR | ' . $ex->getMessage());
                         $_SESSION['status'] = $ex->getMessage();
                     }
 

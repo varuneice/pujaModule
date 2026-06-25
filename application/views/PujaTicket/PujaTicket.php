@@ -271,7 +271,7 @@ if($mainadminrole == "true"){
                 <!--Title -->
                  <div class="title-column col-lg-6 col-md-12 col-sm-12">
                     <img style="float:left;padding:20px" src="../1.svg" width="35%">
-				    <img style="border-radius: 96px;float: left;padding: 0px;" src="../puja_logo.png" width="37%">
+                    <img style="border-radius: 96px;float: left;padding: 0px; margin-top: 2rem;" src="../merchandise.jpg" width="23%">
                 </div>
                 <!--Bread Crumb -->
                 <div class="breadcrumb-column col-lg-6 col-md-12 col-sm-12">
@@ -918,7 +918,7 @@ if($mainadminrole == "true"){
                     <div class="text"><strong>Step 3 : </strong>Make the payment</div>
                     <div class="text"><strong>1. </strong>Tickets allow access to cultural programs. Food coupons are not included.</div>
                     <div class="text"><strong>2. </strong>Tickets are not required for children.</div>
-                    <div class="text"><strong>3. </strong>No onsite parking is available. Registrants can use the free shuttle bus service (Kali Puja) or Uber/Lyft</div>
+                    <div class="text"><strong>3. </strong>No onsite parking is available. Registrants can use the free shuttle bus service or Uber/Lyft</div>
                           </div>
                
                

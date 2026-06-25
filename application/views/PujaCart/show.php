@@ -66,15 +66,41 @@ if (!function_exists('hdbsPujaYtdIsEmeraldDiamondGap')) {
     }
 }
 
+if (!function_exists('hdbsPujaYtdTierBound')) {
+    function hdbsPujaYtdTierBound($tiers, $tierName, $field, $fallback = null) {
+        if (!is_array($tiers)) {
+            return $fallback;
+        }
+
+        foreach ($tiers as $tier) {
+            if (strtolower((string) ($tier['tier_name'] ?? '')) === strtolower((string) $tierName) && array_key_exists($field, $tier)) {
+                $value = $tier[$field];
+                if ($value !== null && $value !== '') {
+                    return (float) $value;
+                }
+            }
+        }
+
+        return $fallback;
+    }
+}
+
 $pujaYtdTiers = $tpl['puja_ytd_tiers'] ?? array();
-$pujaFreeSankalpaMin = 2200;
-$pujaDiamondMin = 5000;
+$pujaFreeSankalpaMin = hdbsPujaYtdTierBound($pujaYtdTiers, 'Emerald', 'min_amount', 2200);
+$pujaDiamondMin = hdbsPujaYtdTierBound($pujaYtdTiers, 'Diamond', 'min_amount', 5000);
 $pujaDoubleSponsorMin = 10001;
 ?>
 <section class="content left width_100">
     <div class="padding-19 nav-tabs-custom left width_100" style= "text-align: -webkit-center;">
         <?php
-        if (!empty($_SESSION['myValue'])) {
+        if (!empty($_SESSION['status'])) {
+            ?>
+            <div class="alert alert-danger in">
+                <strong><?php echo $_SESSION['status']; ?></strong>
+            </div>
+            <?php
+            unset($_SESSION['status']);
+        } elseif (!empty($_SESSION['myValue'])) {
             $_SESSION['myValue'] = array_merge([
                 'oid' => '',
                 'pay_date' => '',
@@ -123,6 +149,13 @@ $pujaDoubleSponsorMin = 10001;
 
             $pujaregisteredfirstattempt =  $_SESSION['pujasankalpaattempt1arr'];
             $pujaregisteredsecondattempt =   $_SESSION['pujasankalpaattempt2arr'];
+
+            $pujaReceiptYtd = (float) $_SESSION['ytdvalue'];
+            if ($dataregister === 'true' && $pujaregistered === 'true' && hdbsPujaYtdIsEmeraldDiamondGap($pujaReceiptYtd, $pujaYtdTiers)) {
+                $pujaReceiptYtd = $pujaDiamondMin;
+                $_SESSION['ytdvalue'] = $pujaReceiptYtd;
+            }
+            $newytd = $pujaReceiptYtd;
 
             $signdollar = "<span style= 'color:red;'>$</span>";
             $finaldoationui = $signdollar . "" . $amountdonation;
@@ -6071,7 +6104,7 @@ $pujaDoubleSponsorMin = 10001;
                         
                                             <?php } ?>
                                             <?php
-            } else if ($_SESSION['myValue']['PaymentOption'] == 'others') {
+            } else if ($_SESSION['myValue']['PaymentOption'] == 'others' || $_SESSION['myValue']['PaymentOption'] == 'zelleProxy') {
                 ?>
                                                  <table border="4" width='585px' style= "text-align: -webkit-center;" >
                                                              <tr>
@@ -6102,7 +6135,7 @@ $pujaDoubleSponsorMin = 10001;
                                                             <tr><td>New Ytd</td><td><?php echo $ytdamountui; ?></td></tr>
                                                         <?php } ?>
                                                             <tr><td>Total Amount</td> <td><span style= 'color:red;'>$</span><?php echo $_SESSION['myValue']['totalamount']; ?></td> </tr>
-                                                            <tr><td>Payment Method</td> <td><?php echo "Zelle"; ?></td></tr>
+                                                            <tr><td>Payment Method</td> <td><?php echo $_SESSION['myValue']['PaymentOption'] == 'zelleProxy' ? "Zelle Proxy" : "Zelle"; ?></td></tr>
                                                             <tr><td>Pay Date</td> <td><?php echo $payfinaldate; ?></td></tr>
                                                             <tr><td>Payment Status</td> <td>Succeeded</td></tr>
                                                             <tr><td colspan="2" style="font-weight: bold;color:red;">An email with your payment information has been sent to your registered email address. Please check your spam folder if you cannot find the email in your inbox</td></tr>
