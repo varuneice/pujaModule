@@ -49,7 +49,9 @@
             <th><?php echo __('Puja Type'); ?></th>
             <th><?php echo __('Registration Amount'); ?></th>
             <th><?php echo __('Senior Discount'); ?></th>
+             <th><?php echo __('22+ Adult Price'); ?></th>
             <th><?php echo __('Total Amount'); ?></th>
+           
             <th><?php echo __('Magazine'); ?></th>
             <th><?php echo __('Student or Out of Towner'); ?></th>
             <th><?php echo __('Membership Category'); ?></th>
@@ -131,6 +133,13 @@
                  
                  $extraAdultMembers = (int) ($tpl['arr'][$i]['extra_adult_members'] ?? 0);
                  $adultMemberCount = (int) ($tpl['arr'][$i]['adult_member_count'] ?? 0);
+                 $adultMemberPrice = $tpl['arr'][$i]['extraadultregistration'] ?? '';
+                 if (($adultMemberPrice === '' || $adultMemberPrice === null) && !empty($tpl['arr'][$i]['adult1_fname'])) {
+                    $adultPayload = json_decode($tpl['arr'][$i]['adult1_fname'], true);
+                    if (is_array($adultPayload) && isset($adultPayload['amount']) && $adultPayload['amount'] !== '') {
+                        $adultMemberPrice = $adultPayload['amount'];
+                    }
+                 }
                  $adultregisteration  = $mainmember + $spousedata +  $parentfname + $parenttwofname + $extraAdultMembers + $adultMemberCount;
                  $totalregistration  = $studentone + $studenttwo + $studentthree + $mainmember + $spousedata +  $parentfname + $parenttwofname + $extraAdultMembers + $adultMemberCount;
             
@@ -186,6 +195,8 @@
                       } ?>
                       
                    <td><?php echo $tpl['arr'][$i]['discountseniorprice']; ?></td>
+                   
+                   <td><?php echo ($adultMemberPrice !== '' && $adultMemberPrice !== null) ? $adultMemberPrice : ''; ?></td>
                    <td><?php echo $tpl['arr'][$i]['totalamount']; ?></td>
                    <td><?php echo $tpl['arr'][$i]['magazine']; ?></td>
                    <td><?php echo $tpl['arr'][$i]['student_or_oot']; ?></td>
@@ -291,6 +302,7 @@
 <script>
 if ($('#tab-1-table-id').length > 0) {
             $('#tab-1-table-id').dataTable({
+                "aaSorting": [[0, "desc"]],
                 "aoColumnDefs": [
                     {'bSortable': false, 'aTargets': [7, 8]}
                 ]

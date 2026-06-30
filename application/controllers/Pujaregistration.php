@@ -1198,7 +1198,7 @@ function sankalpapayment(){
 
     function index()
     {
-        GzObject::loadFiles('Model', array('pujaregistration', 'SankalpaPujaPrice', 'SankalpaPuja', 'pujaregistrationprice', 'pujaRegistrationDate', 'pujaregistrationChildBirthYear', 'pujaregistrationExtraMember'));
+        GzObject::loadFiles('Model', array('pujaregistration', 'SankalpaPujaPrice', 'SankalpaPuja', 'pujaregistrationprice', 'pujaRegistrationDate', 'pujaregistrationChildBirthYear', 'pujaregistrationExtraMember', 'pujaregistrationsetting'));
         $pujaregistrationModel = new pujaregistrationModel();
         $SankalpaPujaPriceModel = new SankalpaPujaPriceModel();
         $SankalpaPujaModel = new SankalpaPujaModel();
@@ -1206,6 +1206,7 @@ function sankalpapayment(){
         $pujaRegistrationDateModel = new pujaRegistrationDateModel();
         $pujaregistrationChildBirthYear = new pujaregistrationChildBirthYearModel();
         $pujaregistrationExtraMemberModel = new pujaregistrationExtraMemberModel();
+        $PujaRegistrationSettingModel = new pujaregistrationsettingModel();
         
         $opts = array();
         try {
@@ -1242,6 +1243,10 @@ function sankalpapayment(){
             $pujaregistrationChildBirth = $pujaregistrationChildBirthYear->getAll($opts);
             $this->tpl['pujaregistrationChildBirth'] = $pujaregistrationChildBirth;
         } catch (Throwable $e) { $this->logPujaRegError('index getAll childBirthYear ERROR | ' . $e->getMessage()); $this->tpl['pujaregistrationChildBirth'] = []; }
+
+        try {
+            $this->tpl['parent_ytd_threshold'] = $PujaRegistrationSettingModel->getActiveSettingValue('parent_ytd_threshold', '749', date('Y'));
+        } catch (Throwable $e) { $this->logPujaRegError('index registration settings ERROR | ' . $e->getMessage()); $this->tpl['parent_ytd_threshold'] = '749'; }
 
     }
 function sankalpaedit(){
@@ -1849,9 +1854,10 @@ function getBadgeReport() {
 
 
 function registrationDate(){
-    GzObject::loadFiles('Model', array('pujaRegistrationDate','User'));
+    GzObject::loadFiles('Model', array('pujaRegistrationDate','User', 'pujaregistrationsetting'));
     $pujaRegistrationDateModel = new pujaRegistrationDateModel();
     $UserModel = new UserModel();
+    $PujaRegistrationSettingModel = new pujaregistrationsettingModel();
 
     if (!empty($_POST['registrationDate'])) {
         
@@ -1866,6 +1872,13 @@ function registrationDate(){
         
         $id = null;
         try { $id = $pujaRegistrationDateModel->update($_POST); } catch (Throwable $e) { $this->logPujaRegError('registrationDate update ERROR | ' . $e->getMessage()); }
+        try {
+            $parentYtdThreshold = preg_replace('/[^0-9.]/', '', (string) ($_POST['parent_ytd_threshold'] ?? '749'));
+            if ($parentYtdThreshold === '') {
+                $parentYtdThreshold = '749';
+            }
+            $PujaRegistrationSettingModel->updateActiveSettingValue(date('Y'), 'parent_ytd_threshold', $parentYtdThreshold);
+        } catch (Throwable $e) { $this->logPujaRegError('registrationDate parent_ytd_threshold update ERROR | ' . $e->getMessage()); }
         //  $id = $pujaRegistrationDateModel->updatewithoutKey($_POST);
 
 

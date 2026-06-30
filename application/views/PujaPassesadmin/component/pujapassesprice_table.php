@@ -8,6 +8,7 @@
         <th><?php echo __('Passes For'); ?></th>
         <th><?php echo __('Passes Type'); ?></th>
         <th><?php echo __('Price'); ?></th>
+        <th>Parent Price</th>
             <th class="icon-th"></th>
             <th class="icon-th"></th>    
         </tr>
@@ -27,7 +28,8 @@
                    <td><?php echo $pujaname; ?></td>
                    <td><?php echo $passestype; ?></td>
                    <td><?php echo $pujatime; ?></td>
-                   <td><?php echo $tpl['pujapassespriceregarr'][$i]['price']; ?></td>
+                    <td><?php echo $tpl['pujapassespriceregarr'][$i]['price']; ?></td>
+                    <td><?php echo $tpl['pujapassespriceregarr'][$i]['parentprice'] ?? ''; ?></td>
                    <?php if ($this->controller->isAdmin()) { ?>
                    <td><a class="btn btn-success btn-sm" href="<?php echo INSTALL_URL; ?>PujaPassesadmin/pujapassespriceedit/<?php echo $tpl['pujapassespriceregarr'][$i]['id']; ?>" rev="<?php echo $tpl['pujapassespriceregarr'][$i]['id']; ?>"><span class="glyphicon glyphicon-eye-open"></span></a></td>
                    <?php } ?> 

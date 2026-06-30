@@ -13,6 +13,7 @@ include_once FRAMEWORK_PATH . 'DeleteQuery.php';
 class Model extends GzObject {
 
     protected $pdo, $structure;
+    protected static $pdoPool = array();
 
     /** @var boolean|callback */
     public $debug;
@@ -110,9 +111,13 @@ class Model extends GzObject {
         }
 
         try {
-            $this->pdo = new PDO($dns, $this->user, $this->pass, $pdo_options);
-            // Azure MySQL enforces ONLY_FULL_GROUP_BY; remove it for this session
-            $this->pdo->exec("SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY', '')");
+            $poolKey = sha1($dns . "\n" . $this->user . "\n" . $this->pass . "\n" . serialize($pdo_options));
+            if (!isset(self::$pdoPool[$poolKey])) {
+                self::$pdoPool[$poolKey] = new PDO($dns, $this->user, $this->pass, $pdo_options);
+                // Azure MySQL enforces ONLY_FULL_GROUP_BY; remove it once per request connection.
+                self::$pdoPool[$poolKey]->exec("SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY', '')");
+            }
+            $this->pdo = self::$pdoPool[$poolKey];
         } catch (Exception $e) {
             $msg = 'DB connection failed: ' . $e->getMessage();
             error_log('[Model] ' . $msg . ' | host=' . $this->host . ' user=' . $this->user . ' db=' . $this->database);

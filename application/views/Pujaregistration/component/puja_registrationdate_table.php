@@ -7,7 +7,11 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                      <tr class="tr">
                       <td class="td"><label>Puja Registration Date</label></td>
                       <td class="td"><input  required="true" id="regDate" class="form-control input-sm" type="date" name="registrationDate" size="25" value="<?php echo ($tpl['registrationdatearr'][0] ?? [])['registrationDate']; ?>" title="<?php echo __('Registration Date'); ?>"></td>
-                     
+                      
+                    </tr>
+                    <tr class="tr">
+                      <td class="td"><label>Parent Registration YTD Threshold</label></td>
+                      <td class="td"><input required="true" id="parentYtdThreshold" class="form-control input-sm" type="number" name="parent_ytd_threshold" size="25" value="<?php echo htmlspecialchars($tpl['parent_ytd_threshold'] ?? '749', ENT_QUOTES); ?>" title="<?php echo __('Parent Registration YTD Threshold'); ?>" min="0" step="1"></td>
                     </tr>
                 </table>
                 <br>

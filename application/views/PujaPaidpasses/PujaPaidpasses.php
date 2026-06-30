@@ -1687,7 +1687,7 @@
                             only. Both Day and Evening Passes include access to cultural programs </div>
                         <div class="text"><strong>3. </strong>For family registration, children allowed free subject to
                             Year of birth being 2003 or later.</div>
-                        <div class="text"><strong>4. </strong>Parents cannot be included in Passes</div>
+                        <div class="text"><strong>4. </strong>Parent passes can be added based on current YTD eligibility.</div>
                         <!-- <div class="text"><strong>5. </strong>Student rate applicable to FULL TIME students only. Part
                             time or Executive MBA students are not eligible.</div>
                         <div class="text"><strong>6. </strong>Student with family only if the spouse is not working
@@ -2254,6 +2254,16 @@
         $("#parentregprice").val("");
     }
 
+    function hasPaidPassParentDetails(parentCount) {
+        const parentOneReady = $.trim($("#parent_register_fname").val()) !== "" && $.trim($("#parent_register_lname").val()) !== "";
+        if (parentCount === 1) {
+            return parentOneReady;
+        }
+
+        const parentTwoReady = $.trim($("#parent_register2_fname").val()) !== "" && $.trim($("#parent_register2_lname").val()) !== "";
+        return parentOneReady && parentTwoReady;
+    }
+
     function getPaidPassParentPriceFor() {
         const membertype = $("#pul2").val();
         const membercategory = $("#memcatfam").val();
@@ -2273,23 +2283,54 @@
     }
 
     function getParentRegistrationPujaPrice() {
+        debugger;
         const oneParent = $("#passParentOne").is(":checked");
         const twoParents = $("#passParentTwo").is(":checked");
         const parentCount = twoParents ? 2 : (oneParent ? 1 : 0);
         const baseTotal = getPaidPassTotalWithoutParent();
+        console.log("[PujaPaidpasses Parent] start", {
+            parentCount: parentCount,
+            baseTotal: baseTotal,
+            previousParentPrice: $("#parentregprice").val()
+        });
 
         if (parentCount === 0) {
             $("#parentregprice").val("");
             $("#total_value").val(baseTotal || "");
+            console.log("[PujaPaidpasses Parent] no parent selected", {
+                finalTotal: $("#total_value").val()
+            });
             return;
         }
 
+        if (!hasPaidPassParentDetails(parentCount)) {
+            $("#parentregprice").val("");
+            $("#total_value").val(baseTotal || "");
+            console.log("[PujaPaidpasses Parent] waiting for parent details", {
+                parentCount: parentCount,
+                finalTotal: $("#total_value").val()
+            });
+            return;
+        }
+
+        const parentYtdThreshold = Number(<?php echo json_encode((float) ($tpl['parent_ytd_threshold'] ?? 749)); ?>);
         const annualYtd = parseFloat($("#ytd1").val());
         const donationAmount = parseFloat($("#totaldonation").val());
         const futureYtd = (isNaN(annualYtd) ? 0 : annualYtd) + (isNaN(donationAmount) ? 0 : donationAmount);
-        if (futureYtd >= 400) {
+        console.log("[PujaPaidpasses Parent] ytd check", {
+            currentYtd: isNaN(annualYtd) ? 0 : annualYtd,
+            donationAmount: isNaN(donationAmount) ? 0 : donationAmount,
+            futureYtd: futureYtd,
+            parentYtdThreshold: parentYtdThreshold
+        });
+        if (futureYtd >= parentYtdThreshold) {
             $("#parentregprice").val("");
             $("#total_value").val(baseTotal || "");
+            console.log("[PujaPaidpasses Parent] parent price not added due to YTD threshold", {
+                futureYtd: futureYtd,
+                parentYtdThreshold: parentYtdThreshold,
+                finalTotal: $("#total_value").val()
+            });
             return;
         }
 
@@ -2301,6 +2342,13 @@
         if (!pujaName || !priceFor || !priceType || !getPaidPassSelectedBasePrice()) {
             $("#parentregprice").val("");
             $("#total_value").val(baseTotal || "");
+            console.log("[PujaPaidpasses Parent] missing price data", {
+                pujaName: pujaName,
+                priceFor: priceFor,
+                priceType: priceType,
+                selectedBasePrice: getPaidPassSelectedBasePrice(),
+                finalTotal: $("#total_value").val()
+            });
             return;
         }
 
@@ -2314,11 +2362,28 @@
             },
             url: url1 + "load.php?controller=PujaPaidpasses&action=getparentprice",
             success: function (res) {
+                debugger;
                 const parentPriceElement = $(res).filter("input#parentprice");
                 const unitParentPrice = parentPriceElement.length ? parseFloat(parentPriceElement[0].value) : 0;
                 const parentTotal = (isNaN(unitParentPrice) ? 0 : unitParentPrice) * parentCount;
+                const finalTotal = (baseTotal || 0) + parentTotal;
+                debugger;
                 $("#parentregprice").val(parentTotal || "");
-                $("#total_value").val((baseTotal || 0) + parentTotal);
+                $("#total_value").val(finalTotal);
+                console.log("[PujaPaidpasses Parent] parent price added", {
+                    pujaName: pujaName,
+                    priceFor: priceFor,
+                    priceType: priceType,
+                    parentCount: parentCount,
+                    unitParentPrice: isNaN(unitParentPrice) ? 0 : unitParentPrice,
+                    parentPriceAdded: parentTotal,
+                    currentYtd: isNaN(annualYtd) ? 0 : annualYtd,
+                    donationAmount: isNaN(donationAmount) ? 0 : donationAmount,
+                    futureYtd: futureYtd,
+                    parentYtdThreshold: parentYtdThreshold,
+                    baseTotal: baseTotal || 0,
+                    finalTotal: finalTotal
+                });
             }
         });
     }
@@ -2353,6 +2418,10 @@
         }
         getParentRegistrationPujaPrice();
     }
+
+    $("#parent_register_fname, #parent_register_lname, #parent_register2_fname, #parent_register2_lname").on("input change", function () {
+        getParentRegistrationPujaPrice();
+    });
 
     $("#pul").change(function () {
         $("#pul2").val("");
@@ -2812,6 +2881,7 @@
             $("#total_value").val("");
 
         }
+        getParentRegistrationPujaPrice();
     });
 
     $("#ddlOptional").change(function () {

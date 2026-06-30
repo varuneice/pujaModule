@@ -42,7 +42,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                 <a data-toggle="tab" href="#puja_registration_tab_4"><?php echo __('All Puja Price'); ?></a>
             </li>
             <li class="">
-                <a data-toggle="tab" href="#puja_registration_tab_5"><?php echo __('Puja Registration Date'); ?></a>
+                <a data-toggle="tab" href="#puja_registration_tab_5"><?php echo __('Puja Date / Parent YTD'); ?></a>
             </li>
         </ul>
         <div class="tab-content">

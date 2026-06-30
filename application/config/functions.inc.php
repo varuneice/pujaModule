@@ -592,6 +592,11 @@ class RateLimit {
     }
 
     private static function ensureTable(\PDO $pdo): void {
+        static $ensured = false;
+        if ($ensured) {
+            return;
+        }
+
         $pdo->exec(
             "CREATE TABLE IF NOT EXISTS `login_attempts` (
                 `id`           INT UNSIGNED  NOT NULL AUTO_INCREMENT,
@@ -602,6 +607,7 @@ class RateLimit {
                 INDEX `idx_lookup` (`action`, `identifier`, `attempted_at`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
         );
+        $ensured = true;
     }
 
     public static function isBlocked(string $action, string $identifier): bool {
@@ -671,6 +677,7 @@ class RateLimit {
  */
 function gz_pdo_connect(string $host, string $user, string $pass, string $db): \PDO {
     $dsn = "mysql:host={$host};dbname={$db};charset=utf8mb4";
+    static $connections = array();
 
     $options = [
         \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'",
@@ -696,10 +703,13 @@ function gz_pdo_connect(string $host, string $user, string $pass, string $db): \
         $options[\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
     }
 
-    $pdo = new \PDO($dsn, $user, $pass, $options);
-    // Azure MySQL enforces ONLY_FULL_GROUP_BY; remove it for this session
-    $pdo->exec("SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY', '')");
-    return $pdo;
+    $poolKey = sha1($dsn . "\n" . $user . "\n" . $pass . "\n" . serialize($options));
+    if (!isset($connections[$poolKey])) {
+        $connections[$poolKey] = new \PDO($dsn, $user, $pass, $options);
+        // Azure MySQL enforces ONLY_FULL_GROUP_BY; remove it once per request connection.
+        $connections[$poolKey]->exec("SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY', '')");
+    }
+    return $connections[$poolKey];
 }
 
 function days_in_month($month, $year) {

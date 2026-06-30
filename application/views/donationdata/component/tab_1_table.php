@@ -190,3 +190,10 @@
         </tr>
     </tfoot>
 </table> 
+<script>
+if ($('#tab-1-table-id').length > 0) {
+    $('#tab-1-table-id').dataTable({
+        "aaSorting": [[0, "desc"]]
+    });
+}
+</script>

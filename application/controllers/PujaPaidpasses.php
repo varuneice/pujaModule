@@ -65,34 +65,142 @@ function getpujapricedata()
     function getparentprice()
     {
         $this->setIsAjax(true);
-        GzObject::loadFiles('Model', array('pujaregistrationprice', 'pujaRegistrationDate'));
-        $pujaregistrationpriceModel = new pujaregistrationpriceModel();
-        try { $pujaregistrationpriceModel->ensureCurrentRegistrationRates(); } catch (Throwable $e) {}
-        $pujaRegistrationDateModel = new pujaRegistrationDateModel();
+        GzObject::loadFiles('Model', array('pujapassesprice'));
+        $pujapassespriceModel = new pujapassespriceModel();
 
         $pujaname = $_POST['pyjaname'] ?? '';
         $pricefor = $_POST['paymentfor'] ?? '';
         $pricetype = $_POST['pricetype'] ?? '';
-        $row = $pujaregistrationpriceModel->getRegistrationPriceRow($pujaname, $pricefor, $pricetype);
+        $row = $pujapassespriceModel->getParentPriceRow($pujaname, $pricefor, $pricetype);
 
         if (!empty($row['id'])) {
-            $parentBase = (float) ($row['parentregisration'] ?? 0);
-            $lateFee = 0;
-            $puaregistrationDate = $pujaRegistrationDateModel->getAll();
-            $latefeedate = $puaregistrationDate[0]['registrationDate'] ?? '';
-
-            date_default_timezone_set("America/Chicago");
-            $today = date("Y-m-d");
-            if ($latefeedate != '' && $today > $latefeedate) {
-                $lateFeeRow = $pujaregistrationpriceModel->getRegistrationPriceRow($pujaname, $pricefor, 'individual');
-                $lateFee = (float) ($lateFeeRow['latefee'] ?? 0);
-            }
-
-            $parentTotal = $parentBase + $lateFee;
-            echo "<input id='parentprice' value='" . htmlspecialchars($parentTotal, ENT_QUOTES) . "'/> ";
-            echo "<input id='parentbaseprice' value='" . htmlspecialchars($parentBase, ENT_QUOTES) . "'/> ";
-            echo "<input id='parentlatefee' value='" . htmlspecialchars($lateFee, ENT_QUOTES) . "'/> ";
+            $parentPrice = (float) ($row['parentprice'] ?? 0);
+            echo "<input id='parentprice' value='" . htmlspecialchars($parentPrice, ENT_QUOTES) . "'/> ";
         }
+    }
+
+    function sanitizePaidPassParentPost()
+    {
+        $_POST['parent1_fname'] = trim($_POST['parent1_fname'] ?? '');
+        $_POST['parent1_lname'] = trim($_POST['parent1_lname'] ?? '');
+        $_POST['parent2_fname'] = trim($_POST['parent2_fname'] ?? '');
+        $_POST['parent2_lname'] = trim($_POST['parent2_lname'] ?? '');
+        $_POST['parent1_veggie'] = isset($_POST['parent1_veggie']) && is_numeric($_POST['parent1_veggie']) ? (int) $_POST['parent1_veggie'] : 0;
+        $_POST['parent2_veggie'] = isset($_POST['parent2_veggie']) && is_numeric($_POST['parent2_veggie']) ? (int) $_POST['parent2_veggie'] : 0;
+        $_POST['no_of_parent'] = isset($_POST['no_of_parent']) && in_array((string) $_POST['no_of_parent'], array('1', '2'), true) ? (string) $_POST['no_of_parent'] : '';
+        $_POST['extraparentregistration'] = isset($_POST['extraparentregistration']) && is_numeric($_POST['extraparentregistration']) && (float) $_POST['extraparentregistration'] > 0 ? (string) $_POST['extraparentregistration'] : '';
+
+        $parentOneReady = $_POST['parent1_fname'] !== '' && $_POST['parent1_lname'] !== '';
+        $parentTwoReady = $_POST['parent2_fname'] !== '' && $_POST['parent2_lname'] !== '';
+
+        if ($_POST['no_of_parent'] === '1' && $parentOneReady) {
+            $_POST['parent2_fname'] = '';
+            $_POST['parent2_lname'] = '';
+            $_POST['parent2_veggie'] = 0;
+            return;
+        }
+
+        if ($_POST['no_of_parent'] === '2' && $parentOneReady && $parentTwoReady) {
+            return;
+        }
+
+        $_POST['no_of_parent'] = '';
+        $_POST['parent1_fname'] = '';
+        $_POST['parent1_lname'] = '';
+        $_POST['parent1_veggie'] = 0;
+        $_POST['parent2_fname'] = '';
+        $_POST['parent2_lname'] = '';
+        $_POST['parent2_veggie'] = 0;
+        $_POST['extraparentregistration'] = '';
+    }
+
+    function getPaidPassParentReceiptRows($data)
+    {
+        $parentCount = $data['no_of_parent'] ?? '';
+        if (!in_array((string) $parentCount, array('1', '2'), true)) {
+            return '';
+        }
+
+        $parentAmount = $data['extraparentregistration'] ?? '';
+        $parentAmount = is_numeric($parentAmount) && (float) $parentAmount > 0 ? $parentAmount : '0';
+        $parentOne = trim(($data['parent1_fname'] ?? '') . ' ' . ($data['parent1_lname'] ?? ''));
+        $parentTwo = trim(($data['parent2_fname'] ?? '') . ' ' . ($data['parent2_lname'] ?? ''));
+
+        $rows = '<tr><td>Parents</td><td>' . htmlspecialchars((string) $parentCount, ENT_QUOTES) . '</td></tr>';
+        if ($parentOne !== '') {
+            $rows .= '<tr><td>Parent 1</td><td>' . htmlspecialchars($parentOne, ENT_QUOTES) . '</td></tr>';
+        }
+        if ((string) $parentCount === '2' && $parentTwo !== '') {
+            $rows .= '<tr><td>Parent 2</td><td>' . htmlspecialchars($parentTwo, ENT_QUOTES) . '</td></tr>';
+        }
+        $rows .= '<tr><td>Parent Pass Amount</td><td><span style="color:red;">$</span>' . htmlspecialchars((string) $parentAmount, ENT_QUOTES) . '</td></tr>';
+
+        return $rows;
+    }
+
+    function getPaidPassParentEmailRows($data)
+    {
+        $rows = $this->getPaidPassParentReceiptRows($data);
+        return str_replace('<td>', '<td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">', $rows);
+    }
+
+    function getPaidPassStripeApiKey()
+    {
+        $stripeApiKey = trim((string) ($this->tpl["option_arr_values"]["stripe_api_key"] ?? ''));
+        if ($stripeApiKey !== '') {
+            return $stripeApiKey;
+        }
+
+        $stripeApiKey = trim((string) ($this->option_arr["stripe_api_key"] ?? ''));
+        if ($stripeApiKey !== '') {
+            return $stripeApiKey;
+        }
+
+        try {
+            GzObject::loadFiles('Model', 'Option');
+            $OptionModel = new OptionModel();
+            $options = $OptionModel->getAllPairValues();
+            $stripeApiKey = trim((string) ($options["stripe_api_key"] ?? ''));
+            if ($stripeApiKey !== '') {
+                $this->option_arr = $options;
+                $this->tpl['option_arr_values'] = $options;
+                return $stripeApiKey;
+            }
+        } catch (Throwable $e) {
+        }
+
+        foreach (array('STRIPE_API_KEY', 'STRIPE_SECRET_KEY') as $envKey) {
+            $stripeApiKey = trim((string) getenv($envKey));
+            if ($stripeApiKey !== '') {
+                return $stripeApiKey;
+            }
+        }
+
+        return '';
+    }
+
+    function renderPaidPassPaymentError($title, $message)
+    {
+        $message = trim((string) $message);
+        $scriptHint = '';
+        if (stripos($message, 'Unknown column') !== false || stripos($message, 'pujapasses') !== false) {
+            $scriptHint = '<tr><td colspan="2">Please run <code>db_script/run_2026_06_26_sync_puja_passes_latest_prices.php?run=1</code> on this server and try again.</td></tr>';
+        }
+
+        echo "<div style='text-align: -webkit-center;' class='pay'>
+            <table border='4' width='650px'>
+                <tr><td colspan='2'><h2>" . htmlspecialchars($title, ENT_QUOTES) . "</h2></td></tr>
+                <tr><td colspan='2'>" . htmlspecialchars($message !== '' ? $message : 'Unable to process payment request.', ENT_QUOTES) . "</td></tr>
+                " . $scriptHint . "
+                <tr><td colspan='2'>&nbsp;</td></tr>
+            </table>";
+        if ($this->isAdmin() || $this->isEditor()) {
+            echo " <a href='" . INSTALL_URL . "PujaPassesadmin/index'>Go to home</a>";
+        } else {
+            echo " <a href='" . INSTALL_URL . "PujaPaidpasses/PujaPaidpasses/'>Go to home</a>";
+        }
+        echo "</div>";
+        exit();
     }
 
       function PujaPaidpasses() {
@@ -108,7 +216,7 @@ function getpujapricedata()
                 
                 
         $this->layout = 'login';
-       GzObject::loadFiles('Model', array('pujapasses','ConfirmCode', 'Member', 'Donation', 'idnumbers', 'User', 'pujapassesprice'));
+       GzObject::loadFiles('Model', array('pujapasses','ConfirmCode', 'Member', 'Donation', 'idnumbers', 'User', 'pujapassesprice', 'pujaregistrationsetting'));
        $pujapassesModel = new pujapassesModel();
        $DonationModel = new DonationModel();
        $ConfirmCodeModel = new ConfirmCodeModel();
@@ -116,10 +224,16 @@ function getpujapricedata()
        $idnumbersModel = new idnumbersModel();
        $UserModel = new UserModel();
        $pujapassespriceModel = new pujapassespriceModel();
+       $PujaRegistrationSettingModel = new pujaregistrationsettingModel();
        
         $opts = array();
         $arr = $pujapassespriceModel->getAllpujapassesprice($opts);
         $this->tpl['pujaname'] = $arr;
+        try {
+            $this->tpl['parent_ytd_threshold'] = $PujaRegistrationSettingModel->getActiveSettingValue('parent_ytd_threshold', '749', date('Y'));
+        } catch (Throwable $e) {
+            $this->tpl['parent_ytd_threshold'] = '749';
+        }
     
 
         if (!empty($_POST['create_passespayment_request'])) {
@@ -213,10 +327,15 @@ function getpujapricedata()
             $_POST['parent2_lname'] = '';
             $_POST['parent2_veggie'] = 0;
         }
+        $this->sanitizePaidPassParentPost();
         $_POST['Age1'] = isset($_POST['Age1']) && is_numeric($_POST['Age1']) ? (int)$_POST['Age1'] : 0;
         $_POST['Age2'] = isset($_POST['Age2']) && is_numeric($_POST['Age2']) ? (int)$_POST['Age2'] : 0;
         $_POST['Age3'] = isset($_POST['Age3']) && is_numeric($_POST['Age3']) ? (int)$_POST['Age3'] : 0;
-        $id = $pujapassesModel->save(array_merge($_POST, $data));
+        try {
+            $id = $pujapassesModel->save(array_merge($_POST, $data));
+        } catch (Throwable $e) {
+            $this->renderPaidPassPaymentError('Paid Passes save failed', $e->getMessage());
+        }
         // echo "<script>alert(' $id')</script>";
                 if (!empty($id)) {
                            
@@ -232,6 +351,7 @@ function getpujapricedata()
                         $pujatype = $_POST['puja_type'] ?? '';
                         $pujacategory = $_POST['puja_category'] ?? '';
                         $totalamount = $_POST['totalamount'] ?? '';
+                        $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
                             echo "<div style='text-align: -webkit-center;' class = 'pay'>
                       <table border='4'  width='585px' style='margin-left:4em;'>
                       <tr>
@@ -239,6 +359,7 @@ function getpujapricedata()
                       <tr><td colspan='2'><span style='font-size: 18px;font-family: serif;'>Thank You for the Request. You will receive a Payment Link soon from our team after Verification of the Submitted data.</span></td></tr>
                       <tr><td style='width:50%;'>Full Name</td> <td style='width:50%;'>" . $memberfname . " " . $memberlname . "</td> </tr>
                       <tr><td>Puja Type</td> <td>" . $pujatype . "</td> </tr>
+                      " . $parentReceiptRows . "
                       <tr><td>Payable Amount</td> <td><span style= 'color:red;'>$</span>" . $totalamount . "</td> </tr>
                       <tr><td>Purpose</td> <td><span style= 'color:red;'></span>Puja Passes</td> </tr>
                       <tr><td>Payment Status</td> <td>Pending</td>  </tr>
@@ -250,11 +371,12 @@ function getpujapricedata()
 
                    $Emailcc = 'pujaregpayment@durgabari.org';
                    $subjetc = 'Paid Passes Request';
-                       $memberfname = $_POST['First_name'] ?? '';
+                        $memberfname = $_POST['First_name'] ?? '';
                         $memberlname = $_POST['Last_name'] ?? '';
                         $pujatype = $_POST['puja_type'] ?? '';
                         $pujacategory = $_POST['puja_category'] ?? '';
                         $totalamount = $_POST['totalamount'] ?? '';
+                        $parentEmailRows = $this->getPaidPassParentEmailRows($_POST);
 
           $message = '<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
       <div class="email-token-class" style="text-align: justify;">
@@ -288,6 +410,7 @@ function getpujapricedata()
       <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">Puja Type &nbsp;&nbsp;</td>
       <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">' . $pujatype . '</td>
       </tr>
+      ' . $parentEmailRows . '
       <tr>
       <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">Payable Amount &nbsp;&nbsp;</td>
       <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;"><span style="color:red;">$</span>' . $totalamount . '</td>
@@ -382,10 +505,15 @@ function getpujapricedata()
             $_POST['parent2_lname'] = '';
             $_POST['parent2_veggie'] = 0;
         }
+        $this->sanitizePaidPassParentPost();
         $_POST['Age1'] = isset($_POST['Age1']) && is_numeric($_POST['Age1']) ? (int)$_POST['Age1'] : 0;
         $_POST['Age2'] = isset($_POST['Age2']) && is_numeric($_POST['Age2']) ? (int)$_POST['Age2'] : 0;
         $_POST['Age3'] = isset($_POST['Age3']) && is_numeric($_POST['Age3']) ? (int)$_POST['Age3'] : 0;
-        $id = $pujapassesModel->save(array_merge($_POST));
+        try {
+            $id = $pujapassesModel->save(array_merge($_POST));
+        } catch (Throwable $e) {
+            $this->renderPaidPassPaymentError('Paid Passes save failed', $e->getMessage());
+        }
          if (!empty($id)) {
                     // for email ui 
                     $memberid = $_POST['Member_id'] ?? '';
@@ -410,6 +538,8 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
+                    $parentEmailRows = $this->getPaidPassParentEmailRows($_POST);
                     $subjetc = 'HDBS Paid Passes Payment Confirmation';
                     $Emailcc = 'pujaassocpayment@durgabari.org';
                     //$Emailcc = 'prateeksaini@eicetechnology.com';
@@ -453,6 +583,7 @@ function getpujapricedata()
                     <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">Passes For&nbsp;&nbsp;</td>
                     <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">' . $parkingspot . '</td>
                     </tr>
+                    ' . $parentEmailRows . '
                     <tr>
                     <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;">Amount&nbsp;&nbsp;</td>
                     <td style="border: 1px solid black; margin-left: auto; border-collapse: collapse; margin-right: auto; text-align: left;"><span style="color:red;">$</span>' . $amount . '</td>
@@ -577,7 +708,8 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
-                    
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
+                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
                     <tr>
@@ -587,6 +719,7 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
+                     " . $parentReceiptRows . "
                      <tr><td>Payment Method</td> <td>Zelle</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
@@ -699,6 +832,7 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
@@ -709,6 +843,7 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
+                     " . $parentReceiptRows . "
                      <tr><td>Payment Method</td> <td>Check</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
@@ -817,6 +952,7 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
@@ -827,6 +963,7 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
+                     " . $parentReceiptRows . "
                      <tr><td>Payment Method</td> <td>Cash</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
@@ -936,6 +1073,7 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
@@ -946,6 +1084,7 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
+                     " . $parentReceiptRows . "
                      <tr><td>Payment Method</td> <td>Online Deposit</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
@@ -1053,7 +1192,8 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
-                    
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
+                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
                     <tr>
@@ -1063,6 +1203,7 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
+                     " . $parentReceiptRows . "
                      <tr><td>Payment Method</td> <td>SumUp</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
@@ -1088,7 +1229,24 @@ function getpujapricedata()
             $error = '';
             $success = '';
 
-            Stripe::setApiKey1($this->tpl["option_arr_values"]["stripe_api_key"] ?? '');
+            $stripeApiKey = $this->getPaidPassStripeApiKey();
+            if ($stripeApiKey === '') {
+                echo "<div style='text-align: -webkit-center;' class='pay'>
+                    <table border='4' width='585px'>
+                    <tr><td colspan='2'><h2>Stripe payment is not configured</h2></td></tr>
+                    <tr><td colspan='2'>Stripe API key is missing in admin payment settings. Please add the secret key or use another payment method.</td></tr>
+                    <tr><td colspan='2'>&nbsp;</td></tr>
+                    </table>";
+                if ($this->isAdmin() || $this->isEditor()) {
+                    echo " <a href='" . INSTALL_URL . "PujaPassesadmin/index'>Go to home</a>";
+                } else {
+                    echo " <a href='" . INSTALL_URL . "PujaPaidpasses/PujaPaidpasses/'>Go to home</a>";
+                }
+                echo "</div>";
+                exit();
+            }
+
+            Stripe::setApiKey($stripeApiKey);
 
             try {
                 if (!isset($_POST['stripeToken'])) {
@@ -1211,6 +1369,7 @@ function getpujapricedata()
                     $datefor = $_POST['pay_date'] ?? '';
                     $timestamp = !empty($datefor) ? strtotime($datefor) : false;
                     $payfinaldate = $timestamp ? date("m/d/Y", $timestamp) : '';
+                    $parentReceiptRows = $this->getPaidPassParentReceiptRows($_POST);
                     
                     echo "<div style='text-align: -webkit-center;' class = 'pay'>
                     <table border='4' width='585px'>
@@ -1221,7 +1380,8 @@ function getpujapricedata()
                      <tr><td>Member Id</td> <td>" . $memberid . "</td> </tr>
                      <tr><td>Full Name</td> <td>" . $membername . "</td> </tr>
                      <tr><td>Puja Type</td> <td>" . $pujatype . "</td></tr>
-                     <tr><td>Payment Method</td> <td>Stripe</td>  </tr>
+                     " . $parentReceiptRows . "
+                     <tr><td>Payment Method</td> <td> Credit card</td>  </tr>
                      <tr><td>Total Amount</td> <td><span style='color:red;'>$</span>" . $totalamount . "</td> </tr>
                      <tr><td>Payment Status</td> <td>Confirmed</td>  </tr>
                      <tr><td>Pay Date</td> <td>" . $payfinaldate . "</td>  </tr>
@@ -1250,6 +1410,7 @@ function getpujapricedata()
                 }
             } catch (Exception $ex) {
                 $_SESSION['status'] = $ex->getMessage();
+                $this->renderPaidPassPaymentError('Credit card payment failed', $ex->getMessage());
             }
 
           } else {

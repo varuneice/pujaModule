@@ -1968,6 +1968,8 @@
                         else {
                             $("#memchildfnamefam22").val("");
                             $("#memchildlnamefam22").val("");
+                            $("#memchildagefam22").val("");
+                            $("#dvOptionalchild3").hide();
                         }
 
                         let child21 = "";
@@ -2000,6 +2002,8 @@
                         } else {
                             $("#memchildfnamefam2").val("");
                             $("#memchildlnamefam2").val("");
+                            $("#memchildagefam2").val("");
+                            $("#dvOptionalchild2").hide();
                         }
 
                         let child1 = "";
@@ -2034,6 +2038,8 @@
                         else {
                             $("#memchildfnamefam").val("");
                             $("#memchildlnamefam").val("");
+                            $("#memchildagefam").val("");
+                            $("#dvOptionalchild1").hide();
                         }
 
                         let membersplname = "";
@@ -2739,8 +2745,8 @@ function getParentRegistrationPujaPrice(){
         let annualytd = ($("#ytd1").val() * 1);
         let pujaDonationAmount = ($("#totaldonation").val() * 1);
         let fututrYtdParentRegistration = annualytd + pujaDonationAmount;
-        //if((annualytd <399 || isNaN(annualytd) || annualytd == "") && (checkBox.checked == true || checkBox2.checked == true) ){
-        if ((fututrYtdParentRegistration < 400 || isNaN(fututrYtdParentRegistration) || fututrYtdParentRegistration == "") && (checkBox.checked == true || checkBox2.checked == true)) {
+        let parentYtdThreshold = Number(<?php echo json_encode((float) ($tpl['parent_ytd_threshold'] ?? 749)); ?>);
+        if ((fututrYtdParentRegistration < parentYtdThreshold || isNaN(fututrYtdParentRegistration) || fututrYtdParentRegistration == "") && (checkBox.checked == true || checkBox2.checked == true)) {
             var pujaname = $("#pul").val();
            // var parentRegiatrationaPujaName = $("#parentPuja").val();
 

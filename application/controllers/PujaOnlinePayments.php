@@ -472,6 +472,7 @@ class PujaOnlinePayments extends App
       }
 
       $this->tpl['child_yob_cutoff'] = $PujaRegistrationSettingModel->getActiveSettingValue('child_yob_cutoff', '2004', date('Y'));
+      $this->tpl['parent_ytd_threshold'] = $PujaRegistrationSettingModel->getActiveSettingValue('parent_ytd_threshold', '749', date('Y'));
       $this->tpl['puja_ytd_tiers'] = $PujaYtdTierModel->getActiveTiers(date('Y'));
     } catch (Throwable $settingEx) {
       $this->logPujaRegError('REGISTRATION SETTING ERROR | ' . $settingEx->getMessage());

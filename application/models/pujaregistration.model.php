@@ -127,13 +127,32 @@ class pujaregistrationModel extends AppModel {
             'childthree_veggie' => 'TINYINT(1) NOT NULL DEFAULT 0',
             'co_register_adult_members' => 'TINYINT(1) NOT NULL DEFAULT 0',
             'adult_member_count' => 'VARCHAR(10) DEFAULT NULL',
-            'adult1_fname' => 'TEXT DEFAULT NULL'
+            'adult1_fname' => 'TEXT DEFAULT NULL',
+            'adult1_lname' => 'TEXT DEFAULT NULL',
+            'adult1_birth_year' => 'INT DEFAULT NULL',
+            'adult1_veggie' => 'TINYINT(1) NOT NULL DEFAULT 0',
+            'adult2_fname' => 'TEXT DEFAULT NULL',
+            'adult2_lname' => 'TEXT DEFAULT NULL',
+            'adult2_birth_year' => 'INT DEFAULT NULL',
+            'adult2_veggie' => 'TINYINT(1) NOT NULL DEFAULT 0',
+            'adult3_fname' => 'TEXT DEFAULT NULL',
+            'adult3_lname' => 'TEXT DEFAULT NULL',
+            'adult3_birth_year' => 'INT DEFAULT NULL',
+            'adult3_veggie' => 'TINYINT(1) NOT NULL DEFAULT 0',
+            'extraadultregistration' => 'VARCHAR(255) DEFAULT NULL'
         );
 
+        $existingColumns = array();
+        $existing = $this->execute("SHOW COLUMNS FROM `" . $this->getTable() . "`");
+        foreach ($existing as $column) {
+            if (!empty($column['Field'])) {
+                $existingColumns[$column['Field']] = true;
+            }
+        }
+
         foreach ($columns as $column => $definition) {
-            $safeColumn = addslashes($column);
-            $existing = $this->execute("SHOW COLUMNS FROM `" . $this->getTable() . "` LIKE '" . $safeColumn . "'");
-            if (empty($existing)) {
+            if (empty($existingColumns[$column])) {
+                $safeColumn = addslashes($column);
                 try {
                     $this->execute("ALTER TABLE `" . $this->getTable() . "` ADD `" . $safeColumn . "` " . $definition);
                 } catch (Throwable $e) {
@@ -145,6 +164,8 @@ class pujaregistrationModel extends AppModel {
 
     public function syncSchemaWithTableColumns()
     {
+        $this->ensureAdultChildColumns();
+
         $columns = $this->execute("SHOW COLUMNS FROM `" . $this->getTable() . "`");
         if (empty($columns)) {
             return false;

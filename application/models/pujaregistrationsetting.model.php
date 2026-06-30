@@ -110,6 +110,27 @@ class pujaregistrationsettingModel extends AppModel {
 
         return $this->execute($sql);
     }
+
+    public function updateActiveSettingValue($seasonYear, $key, $value)
+    {
+        $seasonYear = (int) ($seasonYear ?: date('Y'));
+        $key = trim((string) $key);
+        $value = trim((string) $value);
+
+        if ($key === '') {
+            return false;
+        }
+
+        $now = date('Y-m-d H:i:s');
+        $sql = "UPDATE `" . $this->getTable() . "` SET
+            `setting_value` = '" . addslashes($value) . "',
+            `updated_at` = '" . $now . "'
+            WHERE `season_year` = " . $seasonYear . "
+            AND `setting_key` = '" . addslashes($key) . "'
+            AND `active` = 1";
+
+        return $this->execute($sql);
+    }
 }
 
 ?>

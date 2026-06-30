@@ -39,10 +39,57 @@
 </section>
 <?php
 require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
+$tpl['pujadataarr'] = array_merge([
+    'id' => '',
+    'state' => '',
+    'regmember' => '',
+    'status' => '',
+    'PaymentOption' => '',
+    'studentavatar' => '',
+    'member_veggie' => '',
+    'senior' => '',
+    'First_name' => '',
+    'Last_name' => '',
+    'member_status' => '',
+    'Student' => '',
+    'outoftowner' => '',
+    'Member_id' => '',
+    'membercategory' => '',
+    'Member_type' => '',
+    'puja_type' => '',
+    'totalamount' => '',
+    'remarks' => '',
+    'spouse_veggie' => '',
+    'Sp_fname' => '',
+    'Sp_lname' => '',
+    'childonefname' => '',
+    'childonelname' => '',
+    'Age1' => '',
+    'childtwofname' => '',
+    'childtwolname' => '',
+    'Age2' => '',
+    'childthreefname' => '',
+    'childthreelname' => '',
+    'Age3' => '',
+    'parent1_fname' => '',
+    'parent1_lname' => '',
+    'parent1_veggie' => '',
+    'parent2_fname' => '',
+    'parent2_lname' => '',
+    'parent2_veggie' => '',
+    'street' => '',
+    'streetname' => '',
+    'unit' => '',
+    'city' => '',
+    'zip' => '',
+    'phone' => '',
+    'email' => '',
+], isset($tpl['pujadataarr']) && is_array($tpl['pujadataarr']) ? $tpl['pujadataarr'] : []);
 $state = $tpl['pujadataarr']['state'];
 $registermember = $tpl['pujadataarr']['regmember'];
 $status = $tpl['pujadataarr']['status'];
 $paymethod = $tpl['pujadataarr']['PaymentOption'];
+$paymentdata = '';
 if ($paymethod == 'stripe') {
     $paymentdata = 'Credit Card';
 } else if ($paymethod == "others") {
@@ -56,8 +103,7 @@ if ($paymethod == 'stripe') {
 }
 
 $document = $tpl['pujadataarr']['studentavatar'];
-$newfileextension =  explode(".",$document);
-$filetype =  strtolower($newfileextension[1]);
+$filetype = strtolower(pathinfo((string) $document, PATHINFO_EXTENSION));
 
 $viewer =  $this->controller->isViewer();
 $levelThree =  $this->controller->isAdmin();

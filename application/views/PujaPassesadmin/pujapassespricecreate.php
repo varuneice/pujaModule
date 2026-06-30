@@ -34,6 +34,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                     <th>Passes Puja Price For</th>
                     <th>Passes Puja Price Type</th> 
                     <th>Passes Price</th>
+                    <th>Parent Price</th>
                     </tr>
                     <tr class="tr">
                     <td class="td"><input required="true" id="pujaDay" class="form-control" type="text" name="pujaname" size="25" value="" placeholder="Puja Day"></td>
@@ -52,6 +53,7 @@ require_once VIEWS_PATH . 'Layouts/admin/error_notice.php';
                                 <option value="individual">individual</option>
                                  </select></td>
                     <td class="td"><input  required="true" id="price" class="form-control input-sm" type="number" name="price" size="25" value="" title="<?php echo __('Price'); ?>" placeholder="Price" min="0" oninput="validity.valid||(value='');" onchange="amountvalid(this.id)"></td>
+                    <td class="td"><input id="parentprice" class="form-control input-sm" type="number" name="parentprice" size="25" value="" title="<?php echo __('Parent Price'); ?>" placeholder="Parent Price" min="0" oninput="validity.valid||(value='');"></td>
                     
                         </tr>
                         </table>
