@@ -7,6 +7,7 @@ class OptionModel extends AppModel {
     var $primaryKey = 'id';
     //var $table = 'options';
     var $table = 'pujapaymetstripeoptions';
+    private static $allRowsCache = array();
 
     var $schema = array(
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
@@ -21,10 +22,18 @@ class OptionModel extends AppModel {
         array('name' => 'order', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'calendar_id', 'type' => 'int', 'default' => ':NULL')
     );
+
+    private function getCachedAll($options = array()) {
+        $cacheKey = md5(serialize($options));
+        if (!array_key_exists($cacheKey, self::$allRowsCache)) {
+            self::$allRowsCache[$cacheKey] = $this->getAll($options);
+        }
+        return self::$allRowsCache[$cacheKey];
+    }
     
     function getAllPairs($options = array()) {
         $arr = array();
-        $result = $this->getAll($options);
+        $result = $this->getCachedAll($options);
         if (!empty($result)) {
             foreach ($result as $row) {
                 $arr[$row['key']] = $row['value'];
@@ -43,7 +52,7 @@ class OptionModel extends AppModel {
     function getPairs($options = array()) {
         $arr = array();
 
-        $result = $this->getAll($options);
+        $result = $this->getCachedAll($options);
 
         if (!empty($result)) {
             foreach ($result as $row) {
@@ -67,7 +76,7 @@ class OptionModel extends AppModel {
     function getAllPairValues($options = array()) {
         $arr = array();
 
-        $result = $this->getAll($options);
+        $result = $this->getCachedAll($options);
 
         if (!empty($result)) {
             foreach ($result as $row) {
@@ -92,7 +101,7 @@ class OptionModel extends AppModel {
     function getAllCalendarsPairValues($options = array()) {
         $arr = array();
 
-        $result = $this->getAll($options);
+        $result = $this->getCachedAll($options);
 
         if (!empty($result)) {
             foreach ($result as $row) {
